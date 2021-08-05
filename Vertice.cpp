@@ -9,6 +9,8 @@ Vertice::Vertice(int ID){
     this->ID = ID;
     this->rootAresta = NULL;
     this->grau = 0;
+    this->grauEntrada = 0;
+    this->grauSaida = 0;
 }
 
 Vertice::Vertice(int ID, double valor){
@@ -16,9 +18,19 @@ Vertice::Vertice(int ID, double valor){
     this->ID = ID;
     this->rootAresta = NULL;
     this->grau = 0;
+    this->grauEntrada = 0;
+    this->grauSaida = 0;
 }
 
 // Getters
+int Vertice::getGrauEntrada(){
+    return this->grauEntrada;
+};
+
+int Vertice::getGrauSaida(){
+    return this->grauSaida;
+};
+
 int Vertice::getID(){
     return this->ID;
 }
@@ -36,6 +48,14 @@ Vertice* Vertice::getProximo(){
 }
 
 // Setters
+void Vertice::setGrauEntrada(int grauEntrada){
+    this->grauEntrada = grauEntrada;
+};
+
+void Vertice::setGrauSaida(int grauSaida){
+    this->grauSaida = grauSaida;
+};
+
 void Vertice::setValor(double valor){
     this->valor = valor;
 }

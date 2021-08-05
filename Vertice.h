@@ -12,7 +12,8 @@ class Vertice {
         int color;
         Aresta* rootAresta;
         Vertice* proximo;
-
+        int grauEntrada;
+        int grauSaida;
 
     public:
         // Atributos
@@ -25,7 +26,11 @@ class Vertice {
         double getValor();
         Aresta* getRootAresta();
         Vertice* getProximo();
+        int getGrauEntrada();
+        int getGrauSaida();
         // Setters
+        void setGrauEntrada(int grauEntrada);
+        void setGrauSaida(int grauSaida);
         void setProximo(Vertice* proximo);
         void setValor(double valor);
         void setRootAresta(Aresta* rootAresta);

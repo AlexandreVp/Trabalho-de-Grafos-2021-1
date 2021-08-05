@@ -17,6 +17,14 @@ Grafo::Grafo(){
 	this->direcionado = false;
 }
 
+bool Grafo::getDirecionado(){
+	return this->direcionado;
+}
+
+void Grafo::setDirecionado(bool ehDirecionado){
+	this->direcionado = ehDirecionado;
+}
+
 Vertice *Grafo::getRootVertice(){
   	return this->rootVertice;
 }
@@ -93,7 +101,20 @@ double Grafo::getArestaValor(int ID1, int ID2){
 	return 0; // Retorna 0 se nao houver aresta entre os vertices
 }
 
-bool Grafo::addAresta(int ID1, int ID2, double valor){
+// Funcao que verifica se existe (true) conexao entre 2 vertices
+bool Grafo::verificaConexao(int ID1, int ID2){
+	Vertice *v = this->getVertice(ID1);
+	Aresta *a = this->getVertice(ID1)->getRootAresta();
+	while (a != NULL) {
+		if (a->getVerticeID() == ID2){
+			return true;
+		}
+		a = a->getProximo();
+	}
+	return false;
+}
+
+bool Grafo::addArestaNaoDirecionada(int ID1, int ID2, double valor){
 	Vertice *a = this->getVertice(ID1);
 	Vertice *b = this->getVertice(ID2);
 	if (a != NULL && b != NULL){
@@ -127,6 +148,50 @@ bool Grafo::addAresta(int ID1, int ID2, double valor){
 		return false;
 }
 
+bool Grafo::addArestaDirecionada(int ID1, int ID2, double valor){
+	Vertice *a = this->getVertice(ID1);
+	Vertice *b = this->getVertice(ID2);
+	if (a != NULL && b != NULL){
+		// Conecta os vertices e incrementa o grau dos mesmos
+		a->conectarAresta(ID2, valor);
+		a->setGrauSaida(a->getGrauSaida() + 1);
+		b->setGrauEntrada(b->getGrauEntrada() + 1);
+		// Incrementa o numero de arestas do grafo
+		this->m++;
+		// Atualiza vetor de arestas
+		ArestaKruskalPrim aresta;
+		aresta.v1 = a;
+		aresta.v2 = b;
+		aresta.valor = valor;
+
+		ArestaKruskalPrim aresta_equivalente;
+		aresta_equivalente.v1 = b;
+		aresta_equivalente.v2 = a;
+		aresta_equivalente.valor = valor;
+
+		// Confere a necessidade de adicionar a aresta
+		// Se não existe aresta de v1 p v2 eh colocada a aresta
+		if (find(arestas.begin(), arestas.end(), aresta) == arestas.end()){
+			this->arestas.push_back(aresta);
+		}
+		// Entretanto, se v1 p v2 existe, mas nao v2 p v1, entao a de v2 p v1 eh enserida
+		else if (find(arestas.begin(), arestas.end(), aresta_equivalente) == arestas.end()){
+			this->arestas.push_back(aresta_equivalente);
+		}
+
+		return true;
+	}
+	else
+		return false;
+}
+
+bool Grafo::addAresta(int ID1, int ID2, double valor){
+	if (this->direcionado){
+		return this->addArestaDirecionada(ID1, ID2, valor);
+	}
+	return this->addArestaNaoDirecionada(ID1, ID2, valor);
+}
+
 bool Grafo::removerAresta(int ID1, int ID2){
 	Vertice *a = this->getVertice(ID1);
 	Vertice *b = this->getVertice(ID2);
@@ -151,6 +216,10 @@ bool Grafo::removerAresta(int ID1, int ID2){
 
 int Grafo::getN(){
   	return this->n;
+}
+
+int Grafo::getM(){
+  return this->m;
 }
 
 bool Grafo::ehVazioVertice(){
@@ -254,6 +323,14 @@ int *Grafo::getListaDeGraus(){
 
 		return listaGraus;
 	}
+}
+
+void Grafo::fechoTransitivoDireto(int ID){
+
+}
+
+void Grafo::fechoTransitivoIndireto(int ID){
+	
 }
 
 int *Grafo::camLargura(int ID){
@@ -669,4 +746,8 @@ void Grafo::prim() {
 	for(ArestaKruskalPrim aresta: solucao)
 		std::cout << "(" << aresta.v1->getID() << ", " << aresta.v2->getID() << ")" << " --> ";
 	std::cout << endl << "Custo total: " << custo_total << endl;
+}
+
+void Grafo::ordenacaoTopologica(Grafo* g){
+	
 }

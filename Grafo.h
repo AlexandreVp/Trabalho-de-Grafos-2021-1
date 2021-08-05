@@ -36,6 +36,9 @@ class Grafo {
         // Cria um grafo vazio com suporte para arestas direcionadas
         Grafo();
 
+        bool getDirecionado();
+        void setDirecionado(bool ehDirecionado);
+
         // Funcao para inserir o primeiro vertice do grafo, ID = 0
         // int addVertice(int ID); 
         // Adiciona um vertice com ID e valor
@@ -47,13 +50,19 @@ class Grafo {
         // Retorna o vertice raiz do grafo
         Vertice* getRootVertice();
 
+        // Funcao que verifica se existe (true) conexao entre 2 vertices
+        bool verificaConexao(int ID1, int ID2);
+
         double getArestaValor(int ID1, int ID2);
         // Funcao para adicionar uma aresta ponderada entre dois vertices com ID dados e valor dado
+        bool addArestaNaoDirecionada(int ID1, int ID2, double valor);
+        bool addArestaDirecionada(int ID1, int ID2, double valor);
         bool addAresta(int ID1, int ID2, double valor); 
         bool removerAresta(int ID1, int ID2);
 
         // Retorna o numero de vertices
         int getN();
+        int getM();
         // Funcao que determina se o grafo tem vertices (true se nao tem vertices)
         bool ehVazioVertice();
         // Funcao que determina se o grafo tem arestas (true se nao tem arestas)
@@ -71,12 +80,15 @@ class Grafo {
         vector<int> getListaIDVertices();
 
         ////////////////////////////
+        void fechoTransitivoDireto(int ID);
+        void fechoTransitivoIndireto(int ID);
+        void dijkstra(int ID1);
+        double** floyd();
+        void kruskal();
+        void prim();
         int* camLargura(int ID);
         void camProfundidade(int ID);
-        void dijkstra(int ID1);
-        void kruskal();
-        double** floyd();
-        void prim();
+        void ordenacaoTopologica(Grafo* grafo);
 
 };
 
