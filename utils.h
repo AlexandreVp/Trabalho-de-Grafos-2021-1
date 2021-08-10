@@ -67,6 +67,9 @@ int criaGrafoListaAdj(Grafo* g, ifstream& entrada)
 {
     string linha;
     int N;
+    int cont = 0;
+    // Peso padrao para grafos nao ponderados
+    double valPadraoNaoPonderado = 1;
 
     if(entrada.is_open())
     {
@@ -82,30 +85,48 @@ int criaGrafoListaAdj(Grafo* g, ifstream& entrada)
         }
         while(!entrada.eof())
         {
-            int cont = 0;
+            cont = 0;
             string v1, v2, val;
             getline(entrada,linha);
-            int vertice1, vertice2;
-
-            // Salva a primeira parte da linha, que contem o primeiro vertice de uma aresta
-            while(linha[cont] != ' ' )
-            {
-                v1 += linha[cont];
+            
+            // Se grafo for ponderado salva os pesos contidos no arquivo
+            if(g->getPonderado()){
+                // Salva a primeira parte da linha, que contem o primeiro vertice de uma aresta
+                while(linha[cont] != ' ' )
+                {
+                    v1 += linha[cont];
+                    cont++;
+                }
                 cont++;
+                // Salva a segunda parte da linha, que contem o segundo vertice de uma aresta
+                while(linha[cont] != ' ')
+                {
+                    v2 += linha[cont];
+                    cont++;
+                }
+                cont++;
+                // Salva a terceira parte da linha, que contem o peso da aresta dada
+                while(linha[cont] >= '0' && linha[cont] <= '9')
+                {
+                    val += linha[cont];
+                    cont++;
+                }
             }
-            cont++;
-            // Salva a segunda parte da linha, que contem o segundo vertice de uma aresta
-            while(linha[cont] != ' ')
-            {
-                v2 += linha[cont];
+            // Se grafo nao for ponderado salva com peso padrao 1
+            else{
+                // Salva a primeira parte da linha, que contem o primeiro vertice de uma aresta
+                while(linha[cont] != ' ' )
+                {
+                    v1 += linha[cont];
+                    cont++;
+                }
                 cont++;
-            }
-            cont++;
-            // Salva a terceira parte da linha, que contem o peso da aresta dada
-            while(linha[cont] >= '0' && linha[cont] <= '9')
-            {
-                val += linha[cont];
-                cont++;
+                // Salva a segunda parte da linha, que contem o segundo vertice de uma aresta
+                while(linha[cont] >= '0' && linha[cont] <= '9')
+                {
+                    v2 += linha[cont];
+                    cont++;
+                }
             }
 
             // Impede multiaresta e selfloop
@@ -113,68 +134,17 @@ int criaGrafoListaAdj(Grafo* g, ifstream& entrada)
 
             // Se nao houver multiaresta ou self loop
             if(verifica){
-                // Adiciona aresta entre os vertices v1 e v2
-                g->addAresta(retornaStringParaInteiro(v1),retornaStringParaInteiro(v2),retornaStringParaInteiro(val));
-            }
-
-        }
-    }
-    else
-    {
-        cerr << "Erro ao abrir arquivo!" << endl;
-        return 0;
-    }
-    return N;
-}
-
-
-// Funcao auxiliar que le um arquivo em forma de MATRIZ DE ADJACENCIA
-// e cria um grafo de acordo com as informacoes passadas no arquivo
-int criaGrafoMatrizAdj(Grafo* g, ifstream& entrada)
-{
-    string linha;
-    int N;
-
-    if(entrada.is_open())
-    {
-
-        // Le segunda linha do arquivo que contem o numero de vertices do grafo
-        getline(entrada,linha);
-        getline(entrada,linha);
-        N = retornaStringParaInteiro(linha);
-        // Cria a quantidade N de vertices lida na linha acima
-        for(int i = 0; i < N; i++)
-        {
-            g->addVertice(i);
-             // Adicionou vertice
-        }
-
-        while(linha != "-----------------CONNECTIONS-----------------")
-            getline(entrada,linha);
-        getline(entrada,linha);
-
-        int i = 0; // Contador para as linhas da matriz de adjacencias
-        while(!entrada.eof())
-        {
-            for(int j = 2*i + 2; j < 2*N; j++)
-            {
-                if(linha[j] != ' ' && linha[j] - '0') // Caso nao seja espaço ou 0
-                {
-                    int v1 = i; // Primeiro vertice da aresta (variavel apenas para facilidade de leitura de codigo)
-                    int v2 = j/2; // Segundo vertice da aresta
-                    
-                    bool verifica = verificaInexistenciaMultiaresta(retornaIntParaString(v1), retornaIntParaString(v2), g) && (v1 != v2);
-
-                    // Se nao houver multiaresta ou self loop
-                    if(verifica){
-                        // Adiciona aresta entre os vertices v1 e v2
-                        g->addAresta(v1,v2,1); // Aresta com peso 1 pois instancia nao é ponderada nas arestas
-                    }           
+                if(g->getPonderado()){
+                    // Adiciona aresta entre os vertices v1 e v2
+                    g->addAresta(retornaStringParaInteiro(v1),retornaStringParaInteiro(v2),retornaStringParaInteiro(val));
+                }
+                else{
+                    // Adiciona aresta entre os vertices v1 e v2
+                    // Aresta com peso 1, ja que instancia nao é ponderada nas arestas
+                    g->addAresta(retornaStringParaInteiro(v1),retornaStringParaInteiro(v2),valPadraoNaoPonderado);
                 }
             }
-            i++;
-            // Le a proxima linha
-            getline(entrada,linha);
+
         }
     }
     else
@@ -184,7 +154,6 @@ int criaGrafoMatrizAdj(Grafo* g, ifstream& entrada)
     }
     return N;
 }
-
 
 
 
@@ -228,14 +197,14 @@ static int menu(Grafo* gP,ofstream& saida)
     int userInput;
     cout << endl << "INSIRA SUA OPCAO:" << endl;
     cout << "Funcionalidades em grafos ponderados" << endl;
-    cout << "(1) a:Fecho transitivo direto" << endl;
-    cout << "(2) b:Fecho transitivo indireto" << endl;
-    cout << "(3) c:Algoritmo de Dijkstra para caminho minimo" << endl;
-    cout << "(4) d:Algoritmo de Floyd para caminho minimo" << endl;
-    cout << "(5) e:Algoritmo de Prim para arvore geradora" << endl;
-    cout << "(6) f:Algoritmo de Kruskal para arvore geradora minima" << endl;
-    cout << "(7) g:Caminhamento em profundidade" << endl;
-    cout << "(8) h:Ordenacao Topologica" << endl;
+    cout << "(1) Fecho transitivo direto" << endl;
+    cout << "(2) Fecho transitivo indireto" << endl;
+    cout << "(3) Algoritmo de Dijkstra para caminho minimo" << endl;
+    cout << "(4) Algoritmo de Floyd para caminho minimo" << endl;
+    cout << "(5) Algoritmo de Prim para arvore geradora" << endl;
+    cout << "(6) Algoritmo de Kruskal para arvore geradora minima" << endl;
+    cout << "(7) Caminhamento em profundidade" << endl;
+    cout << "(8) Ordenacao Topologica" << endl;
     cout << "----" << endl;
     cout << "(9) Funcionalidades para grafos nao ponderados" << endl;
     cout << "(0) Encerrar operacao" << endl;
