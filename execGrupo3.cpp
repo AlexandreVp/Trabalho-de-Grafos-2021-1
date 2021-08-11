@@ -25,7 +25,6 @@ int main(int argc, const char* argv[])
     cin >> ehDirecionado;
     cout << "Eh direcionado: " << ehDirecionado;
     cout << '\n' << endl;
-
     g->setDirecionado(ehDirecionado);
 
     // Obtendo a informacao se o grafo eh ponderado ou nao
@@ -34,14 +33,15 @@ int main(int argc, const char* argv[])
     cin >> ehPonderado;
     cout << "Eh ponderado: " << ehPonderado;
     cout << '\n' << endl;
-
     g->setPonderado(ehPonderado);
+
     
     // Criando grafo a partir de uma lista de adjacencia
+    cout << "Aguarde enquanto o grafo esta sendo criado..." << endl;
     criaGrafoListaAdj(g, entrada);
 
-    // Print de arestas (apenas para teste)
-    g->printArestas();
+    // Print de arestas (apenas para testes)
+    // g->printArestas();
     
     while(menu(g,saida));
     

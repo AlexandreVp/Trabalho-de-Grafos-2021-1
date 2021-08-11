@@ -285,60 +285,30 @@ void Grafo::printArestas(){
 
 
 void Grafo::fechoTransitivoDireto(int ID){
+	
+	// Vertice *v = this->getVertice(ID);
+	// int atual;
 
+	// vector<int> fecho;
+
+	// while (v != NULL){
+	// 	v = v->getProximo();
+	// 	atual = v->getID();
+
+	// 	cout << "atual id: " << atual;
+
+	// 	if(!(std::find(fecho.begin(), fecho.end(), atual) != fecho.end())){
+	// 		fecho.push_back(v->getID());
+	// 	}
+	// }
+
+	// for(int i = 0; i < fecho.size(); i++){
+	// 	cout << fecho[i] << ", ";
+	// }
 }
 
 void Grafo::fechoTransitivoIndireto(int ID){
 	
-}
-
-int *Grafo::camLargura(int ID){
-
-	int *v = new int[this->n];
-	int contador = 0;
-	std::queue<int> queue;
-	queue.push(ID);
-	Vertice *topo;
-	Aresta *e;
-
-	Vertice *p = this->rootVertice;
-
-	bool *visitado = new bool[this->n];
-	int indice = this->getRootVertice()->getID();
-
-	// Preenche o vetor com 0
-	for (int i = 0; i < this->n; i++){
-		visitado[i] = false;
-	}
-
-	std::cout << " -- Sequencia de saida da fila -- " << std::endl;
-
-	while (!queue.empty()){
-		// Pega o primeiro elemento da fila
-		topo = this->getVertice(queue.front());
-
-		std::cout << queue.front() << " --> ";
-		queue.pop();
-
-		visitado[topo->getID()] = true;
-
-		v[contador] = topo->getID();
-		contador++;
-
-		// Coloca cada vertice adjacente na fila
-		e = topo->getRootAresta();
-		while (e != NULL){
-			if (!visitado[e->getVerticeID()]){
-				visitado[e->getVerticeID()] = true;
-				queue.push(e->getVerticeID());
-			}
-			e = e->getProximo();
-		}
-	}
-
-	std::cout << std::endl;
-
-	return v;
 }
 
 void Grafo::camProfundidade(int id){
@@ -705,6 +675,10 @@ void Grafo::prim() {
 	for(ArestaKruskalPrim aresta: solucao)
 		std::cout << "(" << aresta.v1->getID() << ", " << aresta.v2->getID() << ")" << " --> ";
 	std::cout << endl << "Custo total: " << custo_total << endl;
+}
+
+void Grafo::auxOrdenacaoTopologica(){
+	
 }
 
 void Grafo::ordenacaoTopologica(Grafo* g){

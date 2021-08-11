@@ -82,6 +82,8 @@ class Grafo {
         void printArestas();
         // Retorna uma lista de id's dos vertices
         vector<int> getListaIDVertices();
+        // Auxiliar para ordenacao topologica
+        void auxOrdenacaoTopologica();
 
         ////////////////////////////
         void fechoTransitivoDireto(int ID);
@@ -90,7 +92,6 @@ class Grafo {
         double** floyd();
         void kruskal();
         void prim();
-        int* camLargura(int ID);
         void camProfundidade(int ID);
         void ordenacaoTopologica(Grafo* grafo);
 
