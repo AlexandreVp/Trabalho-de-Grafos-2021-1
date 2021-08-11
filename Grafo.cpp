@@ -330,7 +330,72 @@ void Grafo::fechoTransitivoDireto(int ID){
 }
 
 void Grafo::fechoTransitivoIndireto(int ID){
-	
+	int tam = this->getN();
+	stack<int> pilha;
+	bool solucao[tam];
+
+	for (int i = 0; i < tam; i++) {
+		solucao[i] = false;
+	}
+
+	for (int i = 0; i < tam; i++) {
+		if(i == ID) {
+			if( ID + 1 == tam )
+				break;
+			else
+				i++;
+		}
+		Vertice *v = getVertice(i);
+		bool *visitado = new bool[tam];
+
+		for (int j = 0; j < tam; j++)
+			visitado[j] = false;
+		
+		while (true) {
+			if (!visitado[v->getID()]) {
+				visitado[v->getID()] = true;
+				pilha.push(v->getID());
+			}
+			bool encontrado = false;
+			Aresta *e = v->getRootAresta();
+			while (e != NULL) {
+				v = getVertice(e->getVerticeID());
+				if (!visitado[v->getID()]){
+					encontrado = true;
+					break;
+				}
+				e = e->getProximo();
+			}
+			if (encontrado) {
+				v = getVertice(v->getID());
+				if(v->getID() == ID) {
+					solucao[pilha.top()] = true;
+					pilha.pop();
+					if (pilha.empty())
+						break;
+					v = getVertice(pilha.top());
+				}
+			}
+			else {
+				pilha.pop();
+				if (pilha.empty())
+					break;
+				v = getVertice(pilha.top());
+			}
+		}
+	}
+
+	bool virgula = false;
+	for(int i = 0; i < tam; i++) {
+		if(solucao[i] && !virgula) {
+			cout << i;
+			virgula = true;
+		}
+		else if (solucao[i] && virgula) 
+			cout << ',' << i;
+	}
+	if(!virgula)
+		cout << "Conjunto vazio";
 }
 
 int *Grafo::camLargura(int ID){
