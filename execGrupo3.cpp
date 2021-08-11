@@ -9,6 +9,12 @@
 
 using namespace std;
 
+// GRUPO 3
+// ALEXANDRE VIEIRA PEREIRA PACELLI
+// GABRIEL RODRIGUES TOLEDO
+// GUSTAVO MORAIS RODRIGUES COSTA
+// NYKOLAS CATAL√O OLIVEIRA
+
 int main(int argc, const char* argv[])
 {
     Grafo* g = new Grafo();
