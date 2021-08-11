@@ -326,8 +326,46 @@ int *Grafo::getListaDeGraus(){
 }
 
 void Grafo::fechoTransitivoDireto(int ID){
-
+	stack<int> pilha;
+	Vertice* v = this->getVertice(ID);
+	vector<int> fechoDir;
+	bool *visitado = new bool[this->getN()];
+	int j = 0;
+	for (int i = 0; i < this->getN(); i++){
+		visitado[i] = false;
+	}
+	while(true){
+		bool encontrado = false;
+		if (!visitado[v->getID()]){
+			visitado[v->getID()] = true;
+			pilha.push(v->getID());
+			if(v->getID() != ID)
+				fechoDir.push_back(v->getID());
+		}
+		Aresta* e = v->getRootAresta();
+		while(e != NULL){
+			v = getVertice(e->getVerticeID());
+			if(visitado[v->getID()] == false){
+				encontrado = true;
+				break;
+			}
+			e = e->getProximo();
+		}
+		if (encontrado)
+			v = getVertice(v->getID());
+		else{
+			pilha.pop();
+			if (pilha.empty())
+				break;
+			v = getVertice(pilha.top());
+		}
+	}
+	for(int i=0; i < fechoDir.size(); i++){
+		cout << fechoDir[i] << ','; 
+	}
+	cout << endl;
 }
+
 
 void Grafo::fechoTransitivoIndireto(int ID){
 	

@@ -287,7 +287,7 @@ static int menu(Grafo* gP,ofstream& saida)
             
             cin >> vertice;
             if(vertice >= 0 && vertice <= gP->getN() - 1){
-                cout << ">>>Fecho transitivo direto: " << endl;
+                cout << ">>>Fecho transitivo direto do vertice " << vertice << ":" << endl;
                 gP->fechoTransitivoDireto(vertice);
             }
             else{
