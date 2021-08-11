@@ -404,6 +404,8 @@ void Grafo::fechoTransitivoIndireto(int ID){
 	}
 	if(!virgula)
 		cout << "Conjunto vazio";
+
+	cout << endl;
 }
 
 void Grafo::camProfundidade(int id){
