@@ -25,6 +25,14 @@ void Grafo::setDirecionado(bool ehDirecionado){
 	this->direcionado = ehDirecionado;
 }
 
+bool Grafo::getPonderado(){
+	return this->ponderado;
+}
+
+void Grafo::setPonderado(bool ehPonderado){
+	this->ponderado = ehPonderado;
+}
+
 Vertice *Grafo::getRootVertice(){
   	return this->rootVertice;
 }
@@ -89,6 +97,7 @@ Vertice *Grafo::getVertice(int ID){
 	}
 }
 
+// Retorna o valor de uma aresta caso exista
 double Grafo::getArestaValor(int ID1, int ID2){
 	Vertice *v = this->getVertice(ID1);
 	Aresta *a = this->getVertice(ID1)->getRootAresta();
@@ -98,7 +107,8 @@ double Grafo::getArestaValor(int ID1, int ID2){
 		}
 		a = a->getProximo();
 	}
-	return 0; // Retorna 0 se nao houver aresta entre os vertices
+	// Retorna 0 se nao houver aresta entre os vertices
+	return 0;
 }
 
 // Funcao que verifica se existe (true) conexao entre 2 vertices
@@ -273,57 +283,6 @@ void Grafo::printArestas(){
 	}
 }
 
-float Grafo::getGrauMedio(){
-	// Array para guardar se cada vertice foi visitado
-	bool *visitado = new bool[this->n];
-	for (int i = 0; i < this->n; i++){
-		visitado[i] = false;
-	}
-
-	int soma = 0;
-
-	if (this->rootVertice == NULL){
-		delete[] visitado;
-		return 0;
-	}
-	else{
-		Vertice *p = this->rootVertice;
-
-		while (p != NULL){
-			// Caso o vertice nao tenha sido visitado
-			if (!visitado[p->getID()]){
-				// Somando o grau de cada vertice na soma total
-				soma += p->grau;
-			}
-			p = p->getProximo();
-		}
-
-		return soma / (float)this->n; //retornando a media
-	}
-}
-
-int *Grafo::getListaDeGraus(){
-	int *listaGraus = new int[this->getN()];
-	for (int i = 0; i < this->getN(); i++){
-		listaGraus[i] = 0;
-	}
-
-	if (this->rootVertice == NULL){
-		return 0;
-	}
-	else{
-		Vertice *p = this->rootVertice;
-		while (p != NULL){
-			// Caso o vertice nao tenha sido visitado
-			if (!listaGraus[p->getID()]){
-				listaGraus[p->getID()] = p->grau;
-			}
-			p = p->getProximo();
-		}
-
-		return listaGraus;
-	}
-}
 
 void Grafo::fechoTransitivoDireto(int ID){
 	stack<int> pilha;

@@ -27,8 +27,9 @@ class Grafo {
 
     private:
         Vertice* rootVertice; // Vertice raiz do grafo
-        int n, m; // Quantizacao de vertices e arestas
+        int n, m; // Contadores de vertices e arestas
         bool direcionado; // Suporte para grafo direcionado
+        bool ponderado; // Suporte para grafo ponderado ou nao ponderado
         vector<ArestaKruskalPrim> arestas; // Onde eh armazenadas as arestas 
 
     public:
@@ -36,11 +37,22 @@ class Grafo {
         // Cria um grafo vazio com suporte para arestas direcionadas
         Grafo();
 
+        // Retorna (true) para grafo direcionado
         bool getDirecionado();
-        void setDirecionado(bool ehDirecionado);
+        // Retorna (true) para grafo ponderado
+        bool getPonderado();
+        // Retorna o numero de vertices
+        int getN();
+        // Retorna o numero de arestas
+        int getM();
+        // Retorna o valor de uma aresta dados dois vertices (0 se nao tem aresta)
+        double getArestaValor(int ID1, int ID2);
 
-        // Funcao para inserir o primeiro vertice do grafo, ID = 0
-        // int addVertice(int ID); 
+        // Set se grafo eh direcionado ou nao
+        void setDirecionado(bool ehDirecionado);
+        // Set se grafo eh ponderado ou nao
+        void setPonderado(bool ehPonderado);
+
         // Adiciona um vertice com ID e valor
         int addVertice(int ID);
         // Remocao de um vertice do grafo
@@ -52,17 +64,12 @@ class Grafo {
 
         // Funcao que verifica se existe (true) conexao entre 2 vertices
         bool verificaConexao(int ID1, int ID2);
-
-        double getArestaValor(int ID1, int ID2);
         // Funcao para adicionar uma aresta ponderada entre dois vertices com ID dados e valor dado
         bool addArestaNaoDirecionada(int ID1, int ID2, double valor);
         bool addArestaDirecionada(int ID1, int ID2, double valor);
         bool addAresta(int ID1, int ID2, double valor); 
         bool removerAresta(int ID1, int ID2);
 
-        // Retorna o numero de vertices
-        int getN();
-        int getM();
         // Funcao que determina se o grafo tem vertices (true se nao tem vertices)
         bool ehVazioVertice();
         // Funcao que determina se o grafo tem arestas (true se nao tem arestas)
@@ -73,10 +80,7 @@ class Grafo {
         void salvaVertices(ofstream& saida);
         // Funcao que imprime as arestas do grafo
         void printArestas();
-        // Funcao para o calculo do grau medio dos vertices do grafo
-        float getGrauMedio();
-        // Funcao para a obtencao de uma lista dos graus de cada vertice do grafo
-        int* getListaDeGraus();
+        // Retorna uma lista de id's dos vertices
         vector<int> getListaIDVertices();
 
         ////////////////////////////
