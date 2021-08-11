@@ -33,7 +33,6 @@ class Grafo {
         vector<ArestaKruskalPrim> arestas; // Onde eh armazenadas as arestas 
 
     public:
-        int listaGraus[];
         // Cria um grafo vazio com suporte para arestas direcionadas
         Grafo();
 

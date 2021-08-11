@@ -803,18 +803,18 @@ void Grafo::auxOrdenacaoTopologica(Vertice* primeiro, std::vector< int > &vect, 
 		for(; a != NULL; a = a->getProximo())
 		{
 
-			bool jaFoi = false;
+			bool visitado = false;
 			Vertice* aux = this->getVertice(a->getProximoVertice()->getID());
 
 			for(int i = 0; i < n; i++)
 			{
 				if(visitados[i] == aux)
 				{
-					jaFoi = true;
+					visitado = true;
 				}
 			}
 
-			if(!jaFoi)
+			if(!visitado)
 			{
 				fila.push(aux);
 				visitados[j] = aux;
@@ -832,11 +832,10 @@ void Grafo::ordenacaoTopologica(Grafo* g){
 	int nVertices = g->getN();
 	int nArestas = g->getM();
 	
-	//Excluindo tmb grafos nao direcionados
-    if((nArestas < nVertices - 1) || !g->getDirecionado())
+	//Excluindo tambem grafos nao direcionados
+    if(!g->getDirecionado())
     {
-        cout << "\nGrafo possui pelo menos um ciclo, Ordenacao Topologica impossivel" << endl;
-        //exit(0);
+        cout << "Grafo deve ser direcionado." << endl;
         return;
     }
 
