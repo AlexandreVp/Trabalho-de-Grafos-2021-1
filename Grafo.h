@@ -83,7 +83,7 @@ class Grafo {
         // Retorna uma lista de id's dos vertices
         vector<int> getListaIDVertices();
         // Auxiliar para ordenacao topologica
-        void auxOrdenacaoTopologica();
+        void auxOrdenacaoTopologica(Vertice* primeiro, std::vector< int > &vect, Vertice** visitados, int n);
 
         ////////////////////////////
         void fechoTransitivoDireto(int ID);

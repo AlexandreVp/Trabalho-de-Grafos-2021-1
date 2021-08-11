@@ -701,10 +701,97 @@ void Grafo::prim() {
 	std::cout << endl << "Custo total: " << custo_total << endl;
 }
 
-void Grafo::auxOrdenacaoTopologica(){
-	
+void Grafo::auxOrdenacaoTopologica(Vertice* primeiro, std::vector< int > &vect, Vertice** visitados, int n){
+
+	Vertice* p = primeiro;
+	int j = 0;
+
+    for(int i = 0; i < n; i++)
+    {
+        visitados[i] = NULL;
+    }
+
+    queue<Vertice*> fila;
+    fila.push(p);
+    visitados[0] = p;
+
+    j++;
+
+	while(!(fila.empty()))
+	{
+		Vertice* q = fila.front();
+		fila.pop();
+
+		vect.push_back(q->getID());
+
+		Aresta* a = q->getRootAresta();
+
+
+		for(; a != NULL; a = a->getProximo())
+		{
+
+			bool jaFoi = false;
+			Vertice* aux = this->getVertice(a->getProximoVertice()->getID());
+
+			for(int i = 0; i < n; i++)
+			{
+				if(visitados[i] == aux)
+				{
+					jaFoi = true;
+				}
+			}
+
+			if(!jaFoi)
+			{
+				fila.push(aux);
+				visitados[j] = aux;
+				j++;
+			}
+			if(j == n)
+				break;
+		}
+
+	}
 }
 
 void Grafo::ordenacaoTopologica(Grafo* g){
+
+	int nVertices = g->getN();
+	int nArestas = g->getM();
 	
+	//Excluindo tmb grafos nao direcionados
+    if((nArestas < nVertices - 1) || !g->getDirecionado())
+    {
+        cout << "\nGrafo possui pelo menos um ciclo, Ordenacao Topologica impossivel" << endl;
+        //exit(0);
+        return;
+    }
+
+    Vertice* p = g->getRootVertice();
+    vector<Vertice*> nos;
+    vector<int> ot;
+    queue<Vertice*>fontes;
+
+    Vertice** visitados = new Vertice*[n]();
+
+    for(; p != NULL; p = p->getProximo())
+    {
+        nos.push_back(p);
+        if(p->getGrauEntrada() == 0)
+            fontes.push(p);
+    }
+
+
+    while(!fontes.empty())
+    {
+        Vertice* r = fontes.front();
+        auxOrdenacaoTopologica(r, ot, visitados, n);
+        fontes.pop();
+    }
+
+    cout << "\nOrdenacao topologica: ";
+    for (int i = 0; i < (int)ot.size(); i++)
+    {
+        cout << ot[i] << ", ";
+    }
 }
