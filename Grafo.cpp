@@ -285,6 +285,12 @@ void Grafo::printArestas(){
 
 
 void Grafo::fechoTransitivoDireto(int ID){
+
+	if(!this->getDirecionado()){
+		cout << "Grafo deve ser direcionado para calculo do fecho." << endl;
+		return;
+	}
+
 	stack<int> pilha;
 	Vertice* v = this->getVertice(ID);
 	vector<int> fechoDir;
