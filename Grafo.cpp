@@ -332,6 +332,12 @@ void Grafo::fechoTransitivoDireto(int ID){
 }
 
 void Grafo::fechoTransitivoIndireto(int ID){
+
+	if(!this->getDirecionado()){
+		cout << "Grafo deve ser direcionado para calculo do fecho." << endl;
+		return;
+	}
+
 	int tam = this->getN();
 	stack<int> pilha;
 	bool solucao[tam];
