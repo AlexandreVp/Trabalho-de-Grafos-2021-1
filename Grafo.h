@@ -92,8 +92,9 @@ class Grafo {
         void prim();
         int* camLargura(int ID);
         void camProfundidade(int ID);
-        void ordenacaoTopologica(Grafo* grafo);
-
+        void ordenacaoTopologica();
+        Vertice* getlistaVertices();
+        void auxOT(Vertice* primeiro, std::vector< int > &vect, Vertice** visitados, int n);
 };
 
 

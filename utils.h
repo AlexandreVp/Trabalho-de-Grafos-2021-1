@@ -270,7 +270,7 @@ static int menu(Grafo* gP,ofstream& saida)
             break;
         case 8: 
             cout << "--> Ordenacao Topologica: "  << endl;
-            gP->ordenacaoTopologica(gP);
+            gP->ordenacaoTopologica();
             break;
         case 9: 
             menuNaoPonderado(gP);
