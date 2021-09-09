@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <time.h>
+#include <cstdlib>
 
 Grafo::Grafo()
 {
@@ -131,6 +132,20 @@ double Grafo::getArestaValor(int ID1, int ID2)
 	return 0;
 }
 
+// Retorna uma aresta dado os dois vertices pertencentes a essa aresta
+Aresta *Grafo::getAresta(int ID1, int ID2){
+	Vertice *v = this->getVertice(ID1);
+	Aresta *a = this->getVertice(ID1)->getRootAresta();
+	while (a != NULL){
+		if (a->getVerticeID() == ID2){
+			return a;
+		}
+		a = a->getProximo();
+	}
+	// Retorna 0 se nao houver aresta entre os vertices
+	return 0;
+}
+
 // Funcao que verifica se existe (true) conexao entre 2 vertices
 bool Grafo::verificaConexao(int ID1, int ID2)
 {
@@ -165,11 +180,13 @@ bool Grafo::addArestaNaoDirecionada(int ID1, int ID2, double valor)
 		aresta.v1 = a;
 		aresta.v2 = b;
 		aresta.valor = valor;
+		aresta.rotulo = valor;
 
 		ArestaKruskalPrim aresta_equivalente;
 		aresta_equivalente.v1 = b;
 		aresta_equivalente.v2 = a;
 		aresta_equivalente.valor = valor;
+		aresta_equivalente.rotulo = valor;
 
 		// Confere a necessidade de adicionar a aresta
 		// Caso ja exista uma aresta de v1 para v2, nao exista necessidade de adicionar uma de v2 para v1
@@ -333,66 +350,177 @@ void Grafo::printArestas()
 	}
 }
 
-void Grafo::fechoTransitivoDireto(int ID)
-{
-}
+void Grafo::contaRotulos(){
 
-void Grafo::fechoTransitivoIndireto(int ID)
-{
-}
-
-int *Grafo::camLargura(int ID)
-{
-
-	int *v = new int[this->n];
-	int contador = 0;
-	std::queue<int> queue;
-	queue.push(ID);
-	Vertice *topo;
+	Vertice *p;
 	Aresta *e;
 
-	Vertice *p = this->rootVertice;
+	// Alocando dinamicamente um array auxiliar para contar a frequencia dos rotulos
+	int *contFreqRotulos;
+	contFreqRotulos = (int *)calloc(this->getM() + 1, sizeof(int));
 
-	bool *visitado = new bool[this->n];
-	int indice = this->getRootVertice()->getID();
+	// Passa por todas as arestas do grafo e incrementa em +1 a frequencia de seu rotulo
+	for (ArestaKruskalPrim aresta : arestas){
+		e = this->getAresta(aresta.v1->getID(), aresta.v2->getID());
+		int rotuloAtual = e->getRotulo();
 
-	// Preenche o vetor com 0
-	for (int i = 0; i < this->n; i++)
-	{
-		visitado[i] = false;
+		contFreqRotulos[rotuloAtual] = contFreqRotulos[rotuloAtual] + 1;
 	}
 
-	std::cout << " -- Sequencia de saida da fila -- " << std::endl;
+	// Com os rotulos ja contabilizados, passa por todas as arestas do grafo
+	// Em cada aresta o seu valor sera atualizado para o negativo da frequencia de seu rotulo
+	// Isso eh feito para utilizarmos da heuristica de prim no algoritmo guloso para o problema da AGRM
+	int aux = 0;
+	for (ArestaKruskalPrim aresta : arestas){
+		e = this->getAresta(aresta.v1->getID(), aresta.v2->getID());
+		int rotuloAtual = e->getRotulo();
 
-	while (!queue.empty())
-	{
-		// Pega o primeiro elemento da fila
-		topo = this->getVertice(queue.front());
+		// Alterando o valor da aresta no grafo
+		e->setValor(-contFreqRotulos[rotuloAtual]);
+		// Alterando o valor da aresta na struct auxiliar kruskral e prim
+		this->arestas[aux].valor = -contFreqRotulos[rotuloAtual];
 
-		std::cout << queue.front() << " --> ";
-		queue.pop();
+		aux++;
+	}
 
-		visitado[topo->getID()] = true;
+	// for (ArestaKruskalPrim aresta : arestas){
+	// 	e = this->getAresta(aresta.v1->getID(), aresta.v2->getID());
+		
+	// 	cout << "aresta valor: " << e->getValor() << " + aresta rotulo: " << e->getRotulo() << endl;
 
-		v[contador] = topo->getID();
-		contador++;
+	// 	cout << "aresta valor: " << aresta.valor << " + aresta rotulo: " << aresta.rotulo << endl;
 
-		// Coloca cada vertice adjacente na fila
-		e = topo->getRootAresta();
-		while (e != NULL)
-		{
-			if (!visitado[e->getVerticeID()])
-			{
-				visitado[e->getVerticeID()] = true;
-				queue.push(e->getVerticeID());
+	// 	cout << "aresta valor: " << this->getArestaValor(aresta.v1->getID(), aresta.v2->getID()) << " + aresta rotulo: " << "NC" << endl;
+
+	// 	cout << endl;
+	// }
+
+	// Desalocando da memoria
+	free(contFreqRotulos);
+}
+
+void Grafo::fechoTransitivoDireto(int ID){
+
+	if(!this->getDirecionado()){
+		cout << "Grafo deve ser direcionado para calculo do fecho." << endl;
+		return;
+	}
+
+	stack<int> pilha;
+	Vertice* v = this->getVertice(ID);
+	vector<int> fechoDir;
+	bool *visitado = new bool[this->getN()];
+	int j = 0;
+	for (int i = 0; i < this->getN(); i++){
+		visitado[i] = false;
+	}
+	while(true){
+		bool encontrado = false;
+		if (!visitado[v->getID()]){
+			visitado[v->getID()] = true;
+			pilha.push(v->getID());
+			if(v->getID() != ID)
+				fechoDir.push_back(v->getID());
+		}
+		Aresta* e = v->getRootAresta();
+		while(e != NULL){
+			v = getVertice(e->getVerticeID());
+			if(visitado[v->getID()] == false){
+				encontrado = true;
+				break;
 			}
 			e = e->getProximo();
 		}
+		if (encontrado)
+			v = getVertice(v->getID());
+		else{
+			pilha.pop();
+			if (pilha.empty())
+				break;
+			v = getVertice(pilha.top());
+		}
+	}
+	for(int i=0; i < fechoDir.size(); i++){
+		cout << fechoDir[i] << ','; 
+	}
+	cout << endl;
+}
+
+void Grafo::fechoTransitivoIndireto(int ID){
+
+	if(!this->getDirecionado()){
+		cout << "Grafo deve ser direcionado para calculo do fecho." << endl;
+		return;
 	}
 
-	std::cout << std::endl;
+	int tam = this->getN();
+	stack<int> pilha;
+	bool solucao[tam];
 
-	return v;
+	for (int i = 0; i < tam; i++) {
+		solucao[i] = false;
+	}
+
+	for (int i = 0; i < tam; i++) {
+		if(i == ID) {
+			if( ID + 1 == tam )
+				break;
+			else
+				i++;
+		}
+		Vertice *v = getVertice(i);
+		bool *visitado = new bool[tam];
+
+		for (int j = 0; j < tam; j++)
+			visitado[j] = false;
+		
+		while (true) {
+			if (!visitado[v->getID()]) {
+				visitado[v->getID()] = true;
+				pilha.push(v->getID());
+			}
+			bool encontrado = false;
+			Aresta *e = v->getRootAresta();
+			while (e != NULL) {
+				v = getVertice(e->getVerticeID());
+				if (!visitado[v->getID()]){
+					encontrado = true;
+					break;
+				}
+				e = e->getProximo();
+			}
+			if (encontrado) {
+				v = getVertice(v->getID());
+				if(v->getID() == ID) {
+					solucao[pilha.top()] = true;
+					pilha.pop();
+					if (pilha.empty())
+						break;
+					v = getVertice(pilha.top());
+				}
+			}
+			else {
+				pilha.pop();
+				if (pilha.empty())
+					break;
+				v = getVertice(pilha.top());
+			}
+		}
+	}
+
+	bool virgula = false;
+	for(int i = 0; i < tam; i++) {
+		if(solucao[i] && !virgula) {
+			cout << i;
+			virgula = true;
+		}
+		else if (solucao[i] && virgula) 
+			cout << ',' << i;
+	}
+	if(!virgula)
+		cout << "Conjunto vazio";
+
+	cout << endl;
 }
 
 void Grafo::camProfundidade(int id)
@@ -895,66 +1023,249 @@ void Grafo::auxOT(Vertice* primeiro, std::vector< int > &vect, Vertice** visitad
         }
 }
 
+bool Grafo::encontraElementoVetor(vector<int> vect, int elem){
+    if(std::find(vect.begin(), vect.end(), elem) != vect.end()) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
+void Grafo::gulosoHeuristicaPrim(){
+	Aresta *arestaAux;
 
+	// Copiando o vetor de arestas de forma ordenada para um vetor auxiliar
+	vector<ArestaKruskalPrim> arestas_aux(arestas.size());
+	partial_sort_copy(begin(arestas), end(arestas), begin(arestas_aux), end(arestas_aux));
 
+	// Vetor auxiliar que ira guardar se o rotulo de um determinado tipo entrou na solucao
+	vector<int> guardaRotulosSolucao;
+	int custo_total = 0;
 
+	// Criando a aresta minima selecionada e o vetor solucao de arestas
+	ArestaKruskalPrim arestaMinima = arestas_aux[0];
+	vector<ArestaKruskalPrim> solucao;
 
-
-
-
-void Grafo::ordenacaoTopologica()
-{
-	// L ← Lista vazia que irá conter os elementos ordenados
-
-	// S ← Conjunto de todos os nós sem arestas de entrada
-	// 	enquanto S é não-vazio faça
-	//     remova um nodo n de S
-	//     insira n em L
-	//     para cada nodo m com uma aresta e de n até m faça
-	//         remova a aresta e do grafo
-	//         se m não tem mais arestas de entrada então
-	//             insira  m em S
-	// se o grafo tem arestas então
-	//     escrever mensagem de erro (grafo tem pelo menos um ciclo)
-	// senão
-	//     escrever mensagem  (ordenação topológica proposta: L)
-
-	//Filtrando para apenas trabalhar com grafos direcionados acíclicos:
-	// if (this->getM() > this->getN() - 1)
-	// {
-	// 	cout << "O grafo informado não é aciclico, portanto não é possível Ordenar Topológicamente" << endl;
-	// }
-
-	if (!this->getDirecionado())
-	{
-		cout << "O grafo não é direcionado, portanto não é possível Ordenar Topológicamente" << endl;
+	// Adicionando na solucao a aresta minima
+	// Guardando o rotulo da aresta caso ele ja nao tenha sido guardado
+	solucao.push_back(arestaMinima);
+	if (!this->encontraElementoVetor(guardaRotulosSolucao, arestaMinima.rotulo)){
+		guardaRotulosSolucao.push_back(arestaMinima.rotulo);
 	}
 
-	vector<int> listaIDs = this->getListaIDVertices();
-	vector<int> ordenacaoTopologica;
-	vector<Vertice*> vertices;
-	queue<Vertice*> s;
-	Vertice* v;
-	v = this->getRootVertice();
+	custo_total += arestaMinima.valor;
+	int id_v1 = arestaMinima.v1->getID();
+	int id_v2 = arestaMinima.v2->getID();
 
-	Vertice **visitados = new Vertice *[this->getN()]();
+	int cont;
 
-	for(;v != NULL;v = v->getProximo()){
-		vertices.push_back(v);
-		if(v->getGrauEntrada() == 0)
-			s.push(v);
+	vector<int> prox(this->n); // Vetor auxiliar que armazena os prox
+	vector<int> custos(this->n); // Vetor auxiliar que armazena os custos
+
+	// Sendo i um vertice do grafo
+	// Verifica o custo entre as arestas (i, v1) e (i, v2)
+	// Armazena no prox aquele vertice que, junto com i, possui o menor custo
+	// Armazenando nos custos o custo dessa aresta entre i e prox
+	for(int i = 0; i < this->n; i++) {
+		int aresta1_val;
+		int aresta2_val;
+
+		if (i > id_v1) {
+			aresta1_val = this->getArestaValor(id_v1, i);
+		} else {
+			aresta1_val = this->getArestaValor(i, id_v1);
+		}
+		if (i > id_v2) {
+			aresta2_val = this->getArestaValor(id_v2, i);
+		} else {
+			aresta2_val = this->getArestaValor(i, id_v2);
+		}
+		
+		// Faz as verificacoes para evitar problemas com custo infinito
+		// Custo infinito = valor da aresta entre os vertices eh 0
+		if(aresta1_val < 0 && aresta2_val < 0) {
+			if(aresta1_val < aresta2_val) {
+				prox[i] = id_v1;
+				custos[i] = aresta1_val;
+			} else {
+				prox[i] = id_v2;
+				custos[i] = aresta2_val;
+			}
+		} else if(aresta1_val < 0 && aresta2_val == 0) {
+			prox[i] = id_v1;
+			custos[i] = aresta1_val;
+		} else if(aresta1_val == 0 && aresta2_val < 0){
+			prox[i] = id_v2;
+			custos[i] = aresta2_val;
+		} else {
+			prox[i] = id_v2;
+			custos[i] = 0;
+		}
 	}
-	while(!s.empty()){
-		Vertice* t = s.front();	
-		auxOT(t, ordenacaoTopologica, visitados, this->getN());
-        s.pop();
+
+	// Setando os prox dos vertices incluidos na solucao como -1
+	// -1 sendo o indicador que o vertice ja esta na solucao
+	prox[id_v1] = -1;
+	prox[id_v2] = -1;
+	cont = 0;
+
+	// Encontra o valor minimo entre os custos
+	// Encontra o indice em que esta esse menor custo, para saber a qual aresta ele pertence
+	while(cont < this->n - 2) {
+		int index;
+		bool isMin = false;
+		int min;
+		// Realiza a verificacao para que o custo minimo nao esteja com um vertice que ja esta na solucao,
+		// verificando se seu prox != -1
+		for(int j = 0; j < this->n; j++) {
+			if(prox[j] != -1) {
+				if(!isMin && custos[j] < 0) {
+					min = custos[j];
+					isMin = true;
+					index = j;
+				}
+				if(custos[j] < min && custos[j] < 0) {
+					min = custos[j];
+					index = j;
+				}
+			}
 		}
 
-	 cout << "\nOrdenacao topologica: ";
-    for (int i = 0; i < (int)ordenacaoTopologica.size(); i++)
+		// A nova aresta minima passa a ser aquela com custo minimo
+		ArestaKruskalPrim segunda_aresta_minima;
+		segunda_aresta_minima.v1 = this->getVertice(index);
+		segunda_aresta_minima.v2 = this->getVertice(prox[index]);
+		segunda_aresta_minima.valor = custos[index];
+
+		arestaAux = this->getAresta(segunda_aresta_minima.v1->getID(), segunda_aresta_minima.v2->getID());
+		int rotuloAtual = arestaAux->getRotulo();
+		if (!this->encontraElementoVetor(guardaRotulosSolucao, rotuloAtual)){
+			guardaRotulosSolucao.push_back(rotuloAtual);
+		}
+
+
+		solucao.push_back(segunda_aresta_minima);
+		custo_total += segunda_aresta_minima.valor;
+
+		// O novo vertice na solucao agora recebe prox = -1
+		prox[index] = -1;
+
+		// Caso o custo entre o vertice k e o novo vertice na solucao seja menor que o custo atual,
+		// atualizar o prox e custos de k para esse vertice adicionado
+		for(int k = 0; k < this->n; k++) {
+			int custo_nova_aresta;
+			if (k > index) {
+				custo_nova_aresta = this->getArestaValor(index, k);
+			} else {
+				custo_nova_aresta = this->getArestaValor(k, index);
+			}
+			// custo_nova_aresta = this->getArestaValor(k, index);
+			if(prox[k] != -1  && custo_nova_aresta != 0 && (custo_nova_aresta < custos[k] || (custos[k] == 0 && custo_nova_aresta < 0))) {
+				custos[k] = custo_nova_aresta;
+				prox[k] = index;
+			}
+		}
+
+		cont++;
+	}
+
+	std::cout << endl << "-- Solucao do PAGRM pelo algoritmo Guloso - Heuristica Prim --" << endl;
+	std::cout << "Sequencia de insercao das arestas: " << endl;
+	for(ArestaKruskalPrim aresta: solucao)
+		std::cout << "(" << aresta.v1->getID() << ", " << aresta.v2->getID() << ")" << " --> ";
+	std::cout << endl << "Rotulos utilizados: " << guardaRotulosSolucao.size() << endl;
+}
+
+void Grafo::auxOrdenacaoTopologica(Vertice* primeiro, std::vector< int > &vect, Vertice** visitados, int n){
+
+	Vertice* p = primeiro;
+	int j = 0;
+
+    for(int i = 0; i < n; i++)
     {
-        cout << ordenacaoTopologica[i] << ", ";
+        visitados[i] = NULL;
     }
 
+    queue<Vertice*> fila;
+    fila.push(p);
+    visitados[0] = p;
+
+    j++;
+
+	while(!(fila.empty()))
+	{
+		Vertice* q = fila.front();
+		fila.pop();
+
+		vect.push_back(q->getID());
+
+		Aresta* a = q->getRootAresta();
+
+
+		for(; a != NULL; a = a->getProximo())
+		{
+
+			bool visitado = false;
+			Vertice* aux = this->getVertice(a->getProximoVertice()->getID());
+
+			for(int i = 0; i < n; i++)
+			{
+				if(visitados[i] == aux)
+				{
+					visitado = true;
+				}
+			}
+
+			if(!visitado)
+			{
+				fila.push(aux);
+				visitados[j] = aux;
+				j++;
+			}
+			if(j == n)
+				break;
+		}
+
+	}
+}
+
+void Grafo::ordenacaoTopologica(Grafo* g){
+
+	int nVertices = g->getN();
+	int nArestas = g->getM();
+	
+	//Excluindo tambem grafos nao direcionados
+    if(!g->getDirecionado())
+    {
+        cout << "Grafo deve ser direcionado." << endl;
+        return;
+    }
+
+    Vertice* p = g->getRootVertice();
+    vector<Vertice*> nos;
+    vector<int> ot;
+    queue<Vertice*>fontes;
+
+    Vertice** visitados = new Vertice*[n]();
+
+    for(; p != NULL; p = p->getProximo())
+    {
+        nos.push_back(p);
+        if(p->getGrauEntrada() == 0)
+            fontes.push(p);
+    }
+
+
+    while(!fontes.empty())
+    {
+        Vertice* r = fontes.front();
+        auxOrdenacaoTopologica(r, ot, visitados, n);
+        fontes.pop();
+    }
+
+    cout << "\nOrdenacao topologica: ";
+    for (int i = 0; i < (int)ot.size(); i++)
+    {
+        cout << ot[i] << ", ";
+    }
 }

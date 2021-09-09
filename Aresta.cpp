@@ -7,9 +7,14 @@ Aresta::Aresta(int VerticeID, Aresta* proximo, Vertice* proximoVertice, double v
     this->VerticeID = VerticeID;
     this->proximo = proximo;
     this->valor = valor;
+    this->rotulo = valor;
 }
 
 // Getters
+int Aresta::getRotulo(){
+    return this->rotulo;
+}
+
 int Aresta::getVerticeID(){
     return this->VerticeID;
 }
@@ -27,6 +32,10 @@ Vertice* Aresta::getProximoVertice(){
 }
 
 // Setters
+void Aresta::setRotulo(int rotulo){
+    this->rotulo = rotulo;
+}
+
 void Aresta::setVerticeID(int VerticeID){
     this->VerticeID = VerticeID;
 }

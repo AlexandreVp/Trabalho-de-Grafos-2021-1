@@ -158,39 +158,6 @@ int criaGrafoListaAdj(Grafo* g, ifstream& entrada)
 
 
 
-
-// Menus
-
-// Menu para grafos nao ponderados
-static int menuNaoPonderado(Grafo* g)
-{
-    int userInput;
-    cout << endl << "Funcionalidades em grafos nao ponderados:" << endl;
-    cout << "INSIRA SUA OPCAO:" << endl;
-    cout << "(1) Numero de vertices do grafo" << endl;
-    cout << "(2) Numero de arestas do grafo" << endl;
-    cout << "----" << endl;
-    cout << "(3) Funcionalidades para grafos ponderados" << endl;
-    cout << "(0) Encerrar operacao" << endl;
-    cin >> userInput;
-    switch(userInput)
-    {
-        case 0: 
-            return 0;
-        case 1: 
-            cout << "--> Numero de vertices: " << g->getN() << endl << endl;
-            break;
-        case 2: 
-            cout << "--> Numero de arestas: " << g->getM() << endl << endl;
-            break;
-        case 3:
-            return 5;;
-        default: return 5;       
-    }
-    return userInput;
-}
-
-
 // Menu com as funcoes do trabalho
 static int menu(Grafo* gP,ofstream& saida)
 {
@@ -205,8 +172,8 @@ static int menu(Grafo* gP,ofstream& saida)
     cout << "(6) Algoritmo de Kruskal para arvore geradora minima" << endl;
     cout << "(7) Caminhamento em profundidade" << endl;
     cout << "(8) Ordenacao Topologica" << endl;
+    cout << "(9) Guloso Heuristica Prim" << endl;
     cout << "----" << endl;
-    cout << "(9) Funcionalidades para grafos nao ponderados" << endl;
     cout << "(0) Encerrar operacao" << endl;
     cin >> userInput;
 
@@ -221,7 +188,7 @@ static int menu(Grafo* gP,ofstream& saida)
             
             cin >> vertice;
             if(vertice >= 0 && vertice <= gP->getN() - 1){
-                cout << "--> Fecho transitivo direto: " << endl;
+                cout << ">>>Fecho transitivo direto do vertice " << vertice << ":" << endl;
                 gP->fechoTransitivoDireto(vertice);
             }
             else{
@@ -272,9 +239,9 @@ static int menu(Grafo* gP,ofstream& saida)
             cout << "--> Ordenacao Topologica: "  << endl;
             gP->ordenacaoTopologica();
             break;
-        case 9: 
-            menuNaoPonderado(gP);
-            break;
+        case 9:
+            cout << "--> Guloso Heuristica Prim: " << endl;
+            gP->gulosoHeuristicaPrim();
         default: 
             return 5;      
     }

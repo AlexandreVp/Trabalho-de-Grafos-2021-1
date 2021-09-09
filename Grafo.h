@@ -13,6 +13,7 @@ struct ArestaKruskalPrim{
     Vertice* v1;
     Vertice* v2;
     int valor;
+    int rotulo;
 
     friend bool operator==(const ArestaKruskalPrim a1, const ArestaKruskalPrim a2) {
         return (a1.v1 == a2.v2) && (a1.v2 == a2.v2) && (a1.valor == a2.valor);
@@ -30,10 +31,9 @@ class Grafo {
         int n, m; // Contadores de vertices e arestas
         bool direcionado; // Suporte para grafo direcionado
         bool ponderado; // Suporte para grafo ponderado ou nao ponderado
-        vector<ArestaKruskalPrim> arestas; // Onde eh armazenadas as arestas 
+        vector<ArestaKruskalPrim> arestas; // Onde eh armazenadas as arestas
 
     public:
-        int listaGraus[];
         // Cria um grafo vazio com suporte para arestas direcionadas
         Grafo();
 
@@ -47,6 +47,7 @@ class Grafo {
         int getM();
         // Retorna o valor de uma aresta dados dois vertices (0 se nao tem aresta)
         double getArestaValor(int ID1, int ID2);
+        Aresta* getAresta(int ID1, int ID2);
 
         // Set se grafo eh direcionado ou nao
         void setDirecionado(bool ehDirecionado);
@@ -82,6 +83,12 @@ class Grafo {
         void printArestas();
         // Retorna uma lista de id's dos vertices
         vector<int> getListaIDVertices();
+        // Auxiliar para ordenacao topologica
+        void auxOrdenacaoTopologica(Vertice* primeiro, std::vector< int > &vect, Vertice** visitados, int n);
+
+        bool encontraElementoVetor(vector<int> vect, int elem);
+        void contaRotulos();
+        void gulosoHeuristicaPrim();
 
         ////////////////////////////
         void fechoTransitivoDireto(int ID);
@@ -90,7 +97,6 @@ class Grafo {
         double** floyd();
         void kruskal();
         void prim();
-        int* camLargura(int ID);
         void camProfundidade(int ID);
         void ordenacaoTopologica();
         Vertice* getlistaVertices();
