@@ -158,8 +158,6 @@ int criaGrafoListaAdj(Grafo* g, ifstream& entrada)
 
 
 
-
-
 // Menu com as funcoes do trabalho
 static int menu(Grafo* gP,ofstream& saida)
 {
@@ -174,6 +172,7 @@ static int menu(Grafo* gP,ofstream& saida)
     cout << "(6) Algoritmo de Kruskal para arvore geradora minima" << endl;
     cout << "(7) Caminhamento em profundidade" << endl;
     cout << "(8) Ordenacao Topologica" << endl;
+    cout << "(9) Guloso Heuristica Prim" << endl;
     cout << "----" << endl;
     cout << "(0) Encerrar operacao" << endl;
     cin >> userInput;
@@ -240,6 +239,9 @@ static int menu(Grafo* gP,ofstream& saida)
             cout << "--> Ordenacao Topologica: "  << endl;
             gP->ordenacaoTopologica(gP);
             break;
+        case 9:
+            cout << "--> Guloso Heuristica Prim: " << endl;
+            gP->gulosoHeuristicaPrim();
         default: 
             return 5;      
     }

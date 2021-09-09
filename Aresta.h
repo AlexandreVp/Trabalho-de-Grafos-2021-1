@@ -14,18 +14,21 @@ class Aresta {
         Aresta* proximo;
         Vertice* proximoVertice;
         double valor;
+        int rotulo;
 
     public:
         // Construtor
         Aresta(int VerticeID, Aresta* proximo, Vertice* proximoVertice, double valor);
 
         // Getters
+        int getRotulo();
         int getVerticeID();
         Aresta* getProximo();
         double getValor();
         Vertice* getProximoVertice();
         
         // Setters
+        void setRotulo(int rotulo);
         void setVerticeID(int VerticeID);
         void setProximo(Aresta* proximo);
         void setValor(double valor);

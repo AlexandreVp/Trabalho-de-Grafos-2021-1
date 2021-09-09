@@ -11,9 +11,6 @@ using namespace std;
 
 // GRUPO 3
 // ALEXANDRE VIEIRA PEREIRA PACELLI
-// GABRIEL RODRIGUES TOLEDO
-// GUSTAVO MORAIS RODRIGUES COSTA
-// NYKOLAS CATAL√O OLIVEIRA
 
 int main(int argc, const char* argv[])
 {
@@ -41,13 +38,32 @@ int main(int argc, const char* argv[])
     cout << '\n' << endl;
     g->setPonderado(ehPonderado);
 
+    // Obtendo a informacao se sera trabalhada a Arvore Geradora de Rotulacao Minima
+    bool pagrm;
+    cout << "Voce deseja trabalhar com o problema da Arvore Geradora de Rotulacao Minima? (1) Sim ou (0) Nao: ";
+    cin >> pagrm;
+    cout << "PAGRM: " << pagrm;
+    cout << '\n' << endl;
+    
+    // Garantindo que para o PAGRM o grafo seja nao direcionado e ponderado
+    if (pagrm) {
+        g->setDirecionado(0);
+        g->setPonderado(1);
+    }
     
     // Criando grafo a partir de uma lista de adjacencia
-    cout << "Aguarde enquanto o grafo esta sendo criado..." << endl;
+    cout << "Aguarde enquanto o grafo esta sendo criado...\n" << endl;
     criaGrafoListaAdj(g, entrada);
 
+    // Caso PAGRM seja verdadeiro inicializa a contagem da frequencia dos rotulos
+    // E altera os pesos das arestas para que possamos utilizar da heuristica de prim no algoritmo guloso
+    if (pagrm){
+        cout << "Aguarde enquanto os rotulos sao contabilizados...\n" << endl;
+        g->contaRotulos();
+    }
+
     // Print de arestas (apenas para testes)
-    // g->printArestas();
+    g->printArestas();
     
     while(menu(g,saida));
     

@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <time.h>
+#include <cstdlib>
 
 Grafo::Grafo(){
 	this->n = 0;
@@ -111,6 +112,20 @@ double Grafo::getArestaValor(int ID1, int ID2){
 	return 0;
 }
 
+// Retorna uma aresta dado os dois vertices pertencentes a essa aresta
+Aresta *Grafo::getAresta(int ID1, int ID2){
+	Vertice *v = this->getVertice(ID1);
+	Aresta *a = this->getVertice(ID1)->getRootAresta();
+	while (a != NULL){
+		if (a->getVerticeID() == ID2){
+			return a;
+		}
+		a = a->getProximo();
+	}
+	// Retorna 0 se nao houver aresta entre os vertices
+	return 0;
+}
+
 // Funcao que verifica se existe (true) conexao entre 2 vertices
 bool Grafo::verificaConexao(int ID1, int ID2){
 	Vertice *v = this->getVertice(ID1);
@@ -140,11 +155,13 @@ bool Grafo::addArestaNaoDirecionada(int ID1, int ID2, double valor){
 		aresta.v1 = a;
 		aresta.v2 = b;
 		aresta.valor = valor;
+		aresta.rotulo = valor;
 
 		ArestaKruskalPrim aresta_equivalente;
 		aresta_equivalente.v1 = b;
 		aresta_equivalente.v2 = a;
 		aresta_equivalente.valor = valor;
+		aresta_equivalente.rotulo = valor;
 
 		// Confere a necessidade de adicionar a aresta
 		// Caso ja exista uma aresta de v1 para v2, nao exista necessidade de adicionar uma de v2 para v1
@@ -283,6 +300,54 @@ void Grafo::printArestas(){
 	}
 }
 
+void Grafo::contaRotulos(){
+
+	Vertice *p;
+	Aresta *e;
+
+	// Alocando dinamicamente um array auxiliar para contar a frequencia dos rotulos
+	int *contFreqRotulos;
+	contFreqRotulos = (int *)calloc(this->getM() + 1, sizeof(int));
+
+	// Passa por todas as arestas do grafo e incrementa em +1 a frequencia de seu rotulo
+	for (ArestaKruskalPrim aresta : arestas){
+		e = this->getAresta(aresta.v1->getID(), aresta.v2->getID());
+		int rotuloAtual = e->getRotulo();
+
+		contFreqRotulos[rotuloAtual] = contFreqRotulos[rotuloAtual] + 1;
+	}
+
+	// Com os rotulos ja contabilizados, passa por todas as arestas do grafo
+	// Em cada aresta o seu valor sera atualizado para o negativo da frequencia de seu rotulo
+	// Isso eh feito para utilizarmos da heuristica de prim no algoritmo guloso para o problema da AGRM
+	int aux = 0;
+	for (ArestaKruskalPrim aresta : arestas){
+		e = this->getAresta(aresta.v1->getID(), aresta.v2->getID());
+		int rotuloAtual = e->getRotulo();
+
+		// Alterando o valor da aresta no grafo
+		e->setValor(-contFreqRotulos[rotuloAtual]);
+		// Alterando o valor da aresta na struct auxiliar kruskral e prim
+		this->arestas[aux].valor = -contFreqRotulos[rotuloAtual];
+
+		aux++;
+	}
+
+	// for (ArestaKruskalPrim aresta : arestas){
+	// 	e = this->getAresta(aresta.v1->getID(), aresta.v2->getID());
+		
+	// 	cout << "aresta valor: " << e->getValor() << " + aresta rotulo: " << e->getRotulo() << endl;
+
+	// 	cout << "aresta valor: " << aresta.valor << " + aresta rotulo: " << aresta.rotulo << endl;
+
+	// 	cout << "aresta valor: " << this->getArestaValor(aresta.v1->getID(), aresta.v2->getID()) << " + aresta rotulo: " << "NC" << endl;
+
+	// 	cout << endl;
+	// }
+
+	// Desalocando da memoria
+	free(contFreqRotulos);
+}
 
 void Grafo::fechoTransitivoDireto(int ID){
 
@@ -772,6 +837,159 @@ void Grafo::prim() {
 	for(ArestaKruskalPrim aresta: solucao)
 		std::cout << "(" << aresta.v1->getID() << ", " << aresta.v2->getID() << ")" << " --> ";
 	std::cout << endl << "Custo total: " << custo_total << endl;
+}
+
+bool Grafo::encontraElementoVetor(vector<int> vect, int elem){
+    if(std::find(vect.begin(), vect.end(), elem) != vect.end()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void Grafo::gulosoHeuristicaPrim(){
+	Aresta *arestaAux;
+
+	// Copiando o vetor de arestas de forma ordenada para um vetor auxiliar
+	vector<ArestaKruskalPrim> arestas_aux(arestas.size());
+	partial_sort_copy(begin(arestas), end(arestas), begin(arestas_aux), end(arestas_aux));
+
+	// Vetor auxiliar que ira guardar se o rotulo de um determinado tipo entrou na solucao
+	vector<int> guardaRotulosSolucao;
+	int custo_total = 0;
+
+	// Criando a aresta minima selecionada e o vetor solucao de arestas
+	ArestaKruskalPrim arestaMinima = arestas_aux[0];
+	vector<ArestaKruskalPrim> solucao;
+
+	// Adicionando na solucao a aresta minima
+	// Guardando o rotulo da aresta caso ele ja nao tenha sido guardado
+	solucao.push_back(arestaMinima);
+	if (!this->encontraElementoVetor(guardaRotulosSolucao, arestaMinima.rotulo)){
+		guardaRotulosSolucao.push_back(arestaMinima.rotulo);
+	}
+
+	custo_total += arestaMinima.valor;
+	int id_v1 = arestaMinima.v1->getID();
+	int id_v2 = arestaMinima.v2->getID();
+
+	int cont;
+
+	vector<int> prox(this->n); // Vetor auxiliar que armazena os prox
+	vector<int> custos(this->n); // Vetor auxiliar que armazena os custos
+
+	// Sendo i um vertice do grafo
+	// Verifica o custo entre as arestas (i, v1) e (i, v2)
+	// Armazena no prox aquele vertice que, junto com i, possui o menor custo
+	// Armazenando nos custos o custo dessa aresta entre i e prox
+	for(int i = 0; i < this->n; i++) {
+		int aresta1_val;
+		int aresta2_val;
+
+		if (i > id_v1) {
+			aresta1_val = this->getArestaValor(id_v1, i);
+		} else {
+			aresta1_val = this->getArestaValor(i, id_v1);
+		}
+		if (i > id_v2) {
+			aresta2_val = this->getArestaValor(id_v2, i);
+		} else {
+			aresta2_val = this->getArestaValor(i, id_v2);
+		}
+		
+		// Faz as verificacoes para evitar problemas com custo infinito
+		// Custo infinito = valor da aresta entre os vertices eh 0
+		if(aresta1_val < 0 && aresta2_val < 0) {
+			if(aresta1_val < aresta2_val) {
+				prox[i] = id_v1;
+				custos[i] = aresta1_val;
+			} else {
+				prox[i] = id_v2;
+				custos[i] = aresta2_val;
+			}
+		} else if(aresta1_val < 0 && aresta2_val == 0) {
+			prox[i] = id_v1;
+			custos[i] = aresta1_val;
+		} else if(aresta1_val == 0 && aresta2_val < 0){
+			prox[i] = id_v2;
+			custos[i] = aresta2_val;
+		} else {
+			prox[i] = id_v2;
+			custos[i] = 0;
+		}
+	}
+
+	// Setando os prox dos vertices incluidos na solucao como -1
+	// -1 sendo o indicador que o vertice ja esta na solucao
+	prox[id_v1] = -1;
+	prox[id_v2] = -1;
+	cont = 0;
+
+	// Encontra o valor minimo entre os custos
+	// Encontra o indice em que esta esse menor custo, para saber a qual aresta ele pertence
+	while(cont < this->n - 2) {
+		int index;
+		bool isMin = false;
+		int min;
+		// Realiza a verificacao para que o custo minimo nao esteja com um vertice que ja esta na solucao,
+		// verificando se seu prox != -1
+		for(int j = 0; j < this->n; j++) {
+			if(prox[j] != -1) {
+				if(!isMin && custos[j] < 0) {
+					min = custos[j];
+					isMin = true;
+					index = j;
+				}
+				if(custos[j] < min && custos[j] < 0) {
+					min = custos[j];
+					index = j;
+				}
+			}
+		}
+
+		// A nova aresta minima passa a ser aquela com custo minimo
+		ArestaKruskalPrim segunda_aresta_minima;
+		segunda_aresta_minima.v1 = this->getVertice(index);
+		segunda_aresta_minima.v2 = this->getVertice(prox[index]);
+		segunda_aresta_minima.valor = custos[index];
+
+		arestaAux = this->getAresta(segunda_aresta_minima.v1->getID(), segunda_aresta_minima.v2->getID());
+		int rotuloAtual = arestaAux->getRotulo();
+		if (!this->encontraElementoVetor(guardaRotulosSolucao, rotuloAtual)){
+			guardaRotulosSolucao.push_back(rotuloAtual);
+		}
+
+
+		solucao.push_back(segunda_aresta_minima);
+		custo_total += segunda_aresta_minima.valor;
+
+		// O novo vertice na solucao agora recebe prox = -1
+		prox[index] = -1;
+
+		// Caso o custo entre o vertice k e o novo vertice na solucao seja menor que o custo atual,
+		// atualizar o prox e custos de k para esse vertice adicionado
+		for(int k = 0; k < this->n; k++) {
+			int custo_nova_aresta;
+			if (k > index) {
+				custo_nova_aresta = this->getArestaValor(index, k);
+			} else {
+				custo_nova_aresta = this->getArestaValor(k, index);
+			}
+			// custo_nova_aresta = this->getArestaValor(k, index);
+			if(prox[k] != -1  && custo_nova_aresta != 0 && (custo_nova_aresta < custos[k] || (custos[k] == 0 && custo_nova_aresta < 0))) {
+				custos[k] = custo_nova_aresta;
+				prox[k] = index;
+			}
+		}
+
+		cont++;
+	}
+
+	std::cout << endl << "-- Solucao do PAGRM pelo algoritmo Guloso - Heuristica Prim --" << endl;
+	std::cout << "Sequencia de insercao das arestas: " << endl;
+	for(ArestaKruskalPrim aresta: solucao)
+		std::cout << "(" << aresta.v1->getID() << ", " << aresta.v2->getID() << ")" << " --> ";
+	std::cout << endl << "Rotulos utilizados: " << guardaRotulosSolucao.size() << endl;
 }
 
 void Grafo::auxOrdenacaoTopologica(Vertice* primeiro, std::vector< int > &vect, Vertice** visitados, int n){
