@@ -168,10 +168,10 @@ static int menu(Grafo* gP,ofstream& saida)
         case 0: 
             return 0;
         case 1: 
-            cout << "Qual o vertice de origem? (0 a " << gP->getN() - 1 << ") : ";
+            cout << "Qual o vertice de origem? ";
             
             cin >> vertice;
-            if(vertice >= 0 && vertice <= gP->getN() - 1){
+            if(gP->getVertice(vertice)){
                 cout << ">>>Fecho transitivo direto do vertice " << vertice << ":" << endl;
                 gP->fechoTransitivoDireto(vertice);
             }
@@ -180,10 +180,10 @@ static int menu(Grafo* gP,ofstream& saida)
             }
             break;
         case 2: 
-            cout << "Qual o vertice de origem? (0 a " << gP->getN() - 1 << ") : ";
+            cout << "Qual o vertice de origem? ";
             
             cin >> vertice;
-            if(vertice >= 0 && vertice <= gP->getN() - 1){
+            if(gP->getVertice(vertice)){
                 cout << "--> Fecho transitivo indireto: " << endl;
                 gP->fechoTransitivoIndireto(vertice);
             }
@@ -192,10 +192,10 @@ static int menu(Grafo* gP,ofstream& saida)
             }
             break;
         case 3: 
-            cout << "Qual o vertice de origem? (0 a " << gP->getN() - 1 << ") : ";
+            cout << "Qual o vertice de origem? ";
             int inicio;
             cin >> inicio;
-            if(inicio >= 0 && inicio <= gP->getN() - 1){
+            if(gP->getVertice(inicio)){
                 cout << "--> Caminhos minimos com algoritmo de Dijkstra: " << endl;
                 gP->dijkstra(inicio);
             }
