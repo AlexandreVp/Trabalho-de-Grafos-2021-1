@@ -23,19 +23,11 @@ int main(int argc, const char* argv[])
     saida.open(argv[2], ios::out | ios::trunc);
 
     // Obtendo a informacao se o grafo eh direcionado ou nao
-    bool ehDirecionado;
-    cout << "Seu grafo eh direcionado? (1) Direcionado ou (0) Nao Direcionado: ";
-    cin >> ehDirecionado;
-    cout << "Eh direcionado: " << ehDirecionado;
-    cout << '\n' << endl;
+    bool ehDirecionado = argv[3];
     g->setDirecionado(ehDirecionado);
 
     // Obtendo a informacao se o grafo eh ponderado ou nao
-    bool ehPonderado;
-    cout << "Seu grafo eh Ponderado? (1) Ponderado ou (0) Nao Ponderado: ";
-    cin >> ehPonderado;
-    cout << "Eh ponderado: " << ehPonderado;
-    cout << '\n' << endl;
+    bool ehPonderado = argv[4];
     g->setPonderado(ehPonderado);
 
     // Obtendo a informacao se sera trabalhada a Arvore Geradora de Rotulacao Minima
