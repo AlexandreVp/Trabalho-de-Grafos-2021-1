@@ -1229,43 +1229,43 @@ void Grafo::auxOrdenacaoTopologica(Vertice* primeiro, std::vector< int > &vect, 
 	}
 }
 
-void Grafo::ordenacaoTopologica(Grafo* g){
+// void Grafo::ordenacaoTopologica(Grafo* g){
 
-	int nVertices = g->getN();
-	int nArestas = g->getM();
+// 	int nVertices = g->getN();
+// 	int nArestas = g->getM();
 	
-	//Excluindo tambem grafos nao direcionados
-    if(!g->getDirecionado())
-    {
-        cout << "Grafo deve ser direcionado." << endl;
-        return;
-    }
+// 	//Excluindo tambem grafos nao direcionados
+//     if(!g->getDirecionado())
+//     {
+//         cout << "Grafo deve ser direcionado." << endl;
+//         return;
+//     }
 
-    Vertice* p = g->getRootVertice();
-    vector<Vertice*> nos;
-    vector<int> ot;
-    queue<Vertice*>fontes;
+//     Vertice* p = g->getRootVertice();
+//     vector<Vertice*> nos;
+//     vector<int> ot;
+//     queue<Vertice*>fontes;
 
-    Vertice** visitados = new Vertice*[n]();
+//     Vertice** visitados = new Vertice*[n]();
 
-    for(; p != NULL; p = p->getProximo())
-    {
-        nos.push_back(p);
-        if(p->getGrauEntrada() == 0)
-            fontes.push(p);
-    }
+//     for(; p != NULL; p = p->getProximo())
+//     {
+//         nos.push_back(p);
+//         if(p->getGrauEntrada() == 0)
+//             fontes.push(p);
+//     }
 
 
-    while(!fontes.empty())
-    {
-        Vertice* r = fontes.front();
-        auxOrdenacaoTopologica(r, ot, visitados, n);
-        fontes.pop();
-    }
+//     while(!fontes.empty())
+//     {
+//         Vertice* r = fontes.front();
+//         auxOrdenacaoTopologica(r, ot, visitados, n);
+//         fontes.pop();
+//     }
 
-    cout << "\nOrdenacao topologica: ";
-    for (int i = 0; i < (int)ot.size(); i++)
-    {
-        cout << ot[i] << ", ";
-    }
-}
+//     cout << "\nOrdenacao topologica: ";
+//     for (int i = 0; i < (int)ot.size(); i++)
+//     {
+//         cout << ot[i] << ", ";
+//     }
+// }
