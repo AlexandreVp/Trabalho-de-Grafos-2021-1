@@ -77,33 +77,27 @@ int criaGrafoListaAdj(Grafo* g, ifstream& entrada)
         // Eh lida a primeira linha do arquivo que contem o numero de vertices do grafo
         getline(entrada,linha);
         N = retornaStringParaInteiro(linha);
-        // Cria a quantidade N de vertices lida na linha acima
-        for(int i = 0; i < N; i++)
-        {
-            g->addVertice(i);
-             // Adicionou vertices
-        }
         while(!entrada.eof())
         {
             cont = 0;
             string v1, v2, val;
             getline(entrada,linha);
             
+            // Salva a primeira parte da linha, que contem o primeiro vertice de uma aresta
+            while(linha[cont] != ' ' )
+            {
+                v1 += linha[cont];
+                cont++;
+            }
+            cont++;
+            // Salva a segunda parte da linha, que contem o segundo vertice de uma aresta
+            while(linha[cont] != ' ')
+            {
+                v2 += linha[cont];
+                cont++;
+            }
             // Se grafo for ponderado salva os pesos contidos no arquivo
             if(g->getPonderado()){
-                // Salva a primeira parte da linha, que contem o primeiro vertice de uma aresta
-                while(linha[cont] != ' ' )
-                {
-                    v1 += linha[cont];
-                    cont++;
-                }
-                cont++;
-                // Salva a segunda parte da linha, que contem o segundo vertice de uma aresta
-                while(linha[cont] != ' ')
-                {
-                    v2 += linha[cont];
-                    cont++;
-                }
                 cont++;
                 // Salva a terceira parte da linha, que contem o peso da aresta dada
                 while(linha[cont] >= '0' && linha[cont] <= '9')
@@ -112,22 +106,12 @@ int criaGrafoListaAdj(Grafo* g, ifstream& entrada)
                     cont++;
                 }
             }
-            // Se grafo nao for ponderado salva com peso padrao 1
-            else{
-                // Salva a primeira parte da linha, que contem o primeiro vertice de uma aresta
-                while(linha[cont] != ' ' )
-                {
-                    v1 += linha[cont];
-                    cont++;
-                }
-                cont++;
-                // Salva a segunda parte da linha, que contem o segundo vertice de uma aresta
-                while(linha[cont] >= '0' && linha[cont] <= '9')
-                {
-                    v2 += linha[cont];
-                    cont++;
-                }
-            }
+            int iv1 = retornaStringParaInteiro(v1), iv2 = retornaStringParaInteiro(v2), ival = retornaStringParaInteiro(val);
+            
+            if(!g->getVertice(iv1))
+                g->addVertice(iv1);
+            if(!g->getVertice(iv2))
+                g->addVertice(iv2);
 
             // Impede multiaresta e selfloop
             bool verifica = verificaInexistenciaMultiaresta(v1, v2, g) && (v1 != v2);
@@ -136,12 +120,12 @@ int criaGrafoListaAdj(Grafo* g, ifstream& entrada)
             if(verifica){
                 if(g->getPonderado()){
                     // Adiciona aresta entre os vertices v1 e v2
-                    g->addAresta(retornaStringParaInteiro(v1),retornaStringParaInteiro(v2),retornaStringParaInteiro(val));
+                    g->addAresta(iv1,iv2,ival);
                 }
                 else{
                     // Adiciona aresta entre os vertices v1 e v2
                     // Aresta com peso 1, ja que instancia nao é ponderada nas arestas
-                    g->addAresta(retornaStringParaInteiro(v1),retornaStringParaInteiro(v2),valPadraoNaoPonderado);
+                    g->addAresta(iv1,iv2,valPadraoNaoPonderado);
                 }
             }
 
