@@ -54,17 +54,19 @@ class Grafo {
         // Set se grafo eh ponderado ou nao
         void setPonderado(bool ehPonderado);
 
-        // Adiciona um vertice com ID e valor
-        int addVertice(int ID);
+        // Adiciona um vertice com nome e valor
+        int addVertice(int nome);
         // Remocao de um vertice do grafo
-        bool removerVertice(int ID);
+        bool removerVertice(int nome);
         // Percorre o grafo dado o ID do vertice e retorna o ponteiro para o mesmo
         Vertice* getVertice(int ID);
+        // Percorre o grafo dado o nome do vertice e retorna o ponteiro para o mesmo
+        Vertice *getVerticeByNome(int nome);
         // Retorna o vertice raiz do grafo
         Vertice* getRootVertice();
 
         // Funcao que verifica se existe (true) conexao entre 2 vertices
-        bool verificaConexao(int ID1, int ID2);
+        bool verificaConexao(int nome1, int nome2);
         // Funcao para adicionar uma aresta ponderada entre dois vertices com ID dados e valor dado
         bool addArestaNaoDirecionada(int ID1, int ID2, double valor);
         bool addArestaDirecionada(int ID1, int ID2, double valor);
@@ -91,13 +93,13 @@ class Grafo {
         void gulosoHeuristicaPrim();
 
         ////////////////////////////
-        void fechoTransitivoDireto(int ID);
-        void fechoTransitivoIndireto(int ID);
-        void dijkstra(int ID1);
+        void fechoTransitivoDireto(int nome);
+        void fechoTransitivoIndireto(int nome);
+        void dijkstra(int nome1);
         double** floyd();
         void kruskal();
         void prim();
-        void camProfundidade(int ID);
+        void camProfundidade(int nome);
         void ordenacaoTopologica(Grafo* grafo);
 
 };

@@ -14,15 +14,17 @@ class Vertice {
         Vertice* proximo;
         int grauEntrada;
         int grauSaida;
+        int ID;
+        int nome;
 
     public:
         // Atributos
         int grau;
-        int ID;
-        Vertice(int ID);
-        Vertice(int ID, double valor);
+        Vertice(int ID, int nome);
+        Vertice(int ID, int nome, double valor);
         // Getters
         int getID();
+        int getNome();
         double getValor();
         Aresta* getRootAresta();
         Vertice* getProximo();

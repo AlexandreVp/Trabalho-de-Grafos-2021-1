@@ -34,14 +34,11 @@ string retornaIntParaString(int i)
 }
 
 // Funcao que verifica a inexistencia de multiarestas e self loops
-bool verificaInexistenciaMultiaresta(string ID1, string ID2, Grafo* g)
+bool verificaInexistenciaMultiaresta(int nome1, int nome2, Grafo* g)
 {
-    int intID1 = retornaStringParaInteiro(ID1);
-    int intID2 = retornaStringParaInteiro(ID2);
-
-    bool v1 = g->verificaConexao(intID1, intID2);
+    bool v1 = g->verificaConexao(nome1, nome2);
     // cout << "vertice " << intID1 << " para " << intID2 << ": valor de verificaConexao eh " << v1 << endl;
-    bool v2 = g->verificaConexao(intID2, intID1);
+    bool v2 = g->verificaConexao(nome2, nome1);
     // cout << "vertice " << intID2 << " para " << intID1 << ": valor de verificaConexao eh " << v2 << endl;
     
     // Caso nao exista aresta entre os vertices (grafo nao direcionado)
@@ -108,13 +105,13 @@ int criaGrafoListaAdj(Grafo* g, ifstream& entrada)
             }
             int iv1 = retornaStringParaInteiro(v1), iv2 = retornaStringParaInteiro(v2), ival = retornaStringParaInteiro(val);
             
-            if(!g->getVertice(iv1))
+            if(g->getVerticeByNome(iv1) == NULL)
                 g->addVertice(iv1);
-            if(!g->getVertice(iv2))
+            if(g->getVerticeByNome(iv2) == NULL)
                 g->addVertice(iv2);
 
             // Impede multiaresta e selfloop
-            bool verifica = verificaInexistenciaMultiaresta(v1, v2, g) && (v1 != v2);
+            bool verifica = verificaInexistenciaMultiaresta(iv1, iv2, g) && (iv1 != iv2);
 
             // Se nao houver multiaresta ou self loop
             if(verifica){

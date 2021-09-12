@@ -4,18 +4,20 @@
 #include <iostream>
 
 // Construtor
-Vertice::Vertice(int ID){
+Vertice::Vertice(int ID, int nome){
     this->valor = 0;
     this->ID = ID;
+    this->nome = nome;
     this->rootAresta = NULL;
     this->grau = 0;
     this->grauEntrada = 0;
     this->grauSaida = 0;
 }
 
-Vertice::Vertice(int ID, double valor){
+Vertice::Vertice(int ID, int nome, double valor){
     this->valor = valor;
     this->ID = ID;
+    this->nome = nome;
     this->rootAresta = NULL;
     this->grau = 0;
     this->grauEntrada = 0;
@@ -33,6 +35,10 @@ int Vertice::getGrauSaida(){
 
 int Vertice::getID(){
     return this->ID;
+}
+
+int Vertice::getNome() {
+    return this->nome;
 }
 
 double Vertice::getValor(){
