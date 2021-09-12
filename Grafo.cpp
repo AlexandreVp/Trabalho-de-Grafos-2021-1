@@ -14,6 +14,7 @@
 Grafo::Grafo(){
 	this->n = 0;
 	this->m = 0;
+	this->r = 0;
 	this->rootVertice = NULL;
 	this->direcionado = false;
 }
@@ -269,6 +270,10 @@ int Grafo::getM(){
   return this->m;
 }
 
+int Grafo::getR(){
+	return this->r;
+}
+
 bool Grafo::ehVazioVertice(){
   	return n == 0;
 }
@@ -324,15 +329,21 @@ void Grafo::contaRotulos(){
 
 	Vertice *p;
 	Aresta *e;
+	vector<int> contaRotulos;
 
 	// Alocando dinamicamente um array auxiliar para contar a frequencia dos rotulos
 	int *contFreqRotulos;
-	contFreqRotulos = (int *)calloc(this->getM() + 1, sizeof(int));
+	contFreqRotulos = (int *)calloc(this->getN() + 1, sizeof(int));
 
 	// Passa por todas as arestas do grafo e incrementa em +1 a frequencia de seu rotulo
 	for (ArestaKruskalPrim aresta : arestas){
 		e = this->getAresta(aresta.v1->getID(), aresta.v2->getID());
 		int rotuloAtual = e->getRotulo();
+
+		if (!this->encontraElementoVetor(contaRotulos, rotuloAtual)){
+			contaRotulos.push_back(rotuloAtual);
+			this->r++;
+		};
 
 		contFreqRotulos[rotuloAtual] = contFreqRotulos[rotuloAtual] + 1;
 	}
@@ -352,18 +363,6 @@ void Grafo::contaRotulos(){
 
 		aux++;
 	}
-
-	// for (ArestaKruskalPrim aresta : arestas){
-	// 	e = this->getAresta(aresta.v1->getID(), aresta.v2->getID());
-		
-	// 	cout << "aresta valor: " << e->getValor() << " + aresta rotulo: " << e->getRotulo() << endl;
-
-	// 	cout << "aresta valor: " << aresta.valor << " + aresta rotulo: " << aresta.rotulo << endl;
-
-	// 	cout << "aresta valor: " << this->getArestaValor(aresta.v1->getID(), aresta.v2->getID()) << " + aresta rotulo: " << "NC" << endl;
-
-	// 	cout << endl;
-	// }
 
 	// Desalocando da memoria
 	free(contFreqRotulos);
@@ -872,6 +871,7 @@ bool Grafo::encontraElementoVetor(vector<int> vect, int elem){
 
 void Grafo::gulosoHeuristicaPrim(){
 	Aresta *arestaAux;
+	cout << "O grafo possui " << this->r << " rotulos" << endl;
 
 	// Copiando o vetor de arestas de forma ordenada para um vetor auxiliar
 	vector<ArestaKruskalPrim> arestas_aux(arestas.size());
@@ -1012,7 +1012,7 @@ void Grafo::gulosoHeuristicaPrim(){
 	std::cout << "Sequencia de insercao das arestas: " << endl;
 	for(ArestaKruskalPrim aresta: solucao)
 		std::cout << "(" << aresta.v1->getNome() << ", " << aresta.v2->getNome() << ")" << " --> ";
-	std::cout << endl << "Rotulos utilizados: " << guardaRotulosSolucao.size() << endl;
+	std::cout << endl << "Rotulos utilizados na AGRM: " << guardaRotulosSolucao.size() << endl;
 }
 
 void Grafo::auxOrdenacaoTopologica(Vertice* primeiro, std::vector< int > &vect, Vertice** visitados, int n){

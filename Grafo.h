@@ -32,6 +32,7 @@ class Grafo {
         bool direcionado; // Suporte para grafo direcionado
         bool ponderado; // Suporte para grafo ponderado ou nao ponderado
         vector<ArestaKruskalPrim> arestas; // Onde eh armazenadas as arestas
+        int r; // Contador de rotulos
 
     public:
         // Cria um grafo vazio com suporte para arestas direcionadas
@@ -45,6 +46,8 @@ class Grafo {
         int getN();
         // Retorna o numero de arestas
         int getM();
+        // Retorna o numero de rotulos
+        int getR();
         // Retorna o valor de uma aresta dados dois vertices (0 se nao tem aresta)
         double getArestaValor(int ID1, int ID2);
         Aresta* getAresta(int ID1, int ID2);
