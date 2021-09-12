@@ -221,7 +221,7 @@ static int menu(Grafo* gP,ofstream& saida)
             break;
         case 8: 
             cout << "--> Ordenacao Topologica: "  << endl;
-            gP->ordenacaoTopologica();
+            // gP->ordenacaoTopologica();
             break;
         case 9:
             cout << "--> Guloso Heuristica Prim: " << endl;

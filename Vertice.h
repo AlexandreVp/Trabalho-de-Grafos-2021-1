@@ -19,8 +19,9 @@ class Vertice {
         // Atributos
         int grau;
         int ID;
-        Vertice(int ID);
-        Vertice(int ID, double valor);
+        int Nome;
+        Vertice(int ID, int Nome);
+        Vertice(int ID, int Nome, double valor);
         // Getters
         int getID();
         double getValor();
@@ -28,6 +29,7 @@ class Vertice {
         Vertice* getProximo();
         int getGrauEntrada();
         int getGrauSaida();
+        int getNome();
         // Setters
         void setGrauEntrada(int grauEntrada);
         void setGrauSaida(int grauSaida);

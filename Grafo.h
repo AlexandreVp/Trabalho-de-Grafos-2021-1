@@ -98,8 +98,9 @@ class Grafo {
         void kruskal();
         void prim();
         void camProfundidade(int ID);
-        void ordenacaoTopologica();
+        // void ordenacaoTopologica();
         Vertice* getlistaVertices();
+    
         void auxOT(Vertice* primeiro, std::vector< int > &vect, Vertice** visitados, int n);
 };
 
