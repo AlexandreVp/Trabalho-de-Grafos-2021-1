@@ -44,6 +44,7 @@ Vertice *Grafo::getRootVertice()
 	return this->rootVertice;
 }
 
+<<<<<<< HEAD
 int Grafo::addVertice(int nome)
 {
 	int ID;
@@ -56,17 +57,26 @@ int Grafo::addVertice(int nome)
 		ID = this->getN() - 1;
 	}
 	Vertice *v = new Vertice(ID, nome);
+=======
+int Grafo::addVertice(int nome){
+	Vertice *v = new Vertice(this->getN(), nome);
+>>>>>>> main
 	v->setProximo(this->rootVertice);
 	this->rootVertice = v;
 	this->n++;
 
-	return v->ID;
+	return v->getID();
 }
 
+<<<<<<< HEAD
 bool Grafo::removerVertice(int ID)
 {
 	if (this->rootVertice == NULL)
 	{
+=======
+bool Grafo::removerVertice(int nome){
+	if (this->rootVertice == NULL){
+>>>>>>> main
 		// Caso grafo seja vazio
 		return false;
 	}
@@ -75,10 +85,15 @@ bool Grafo::removerVertice(int ID)
 		Vertice *a = NULL;
 		Vertice *p = this->rootVertice;
 
+<<<<<<< HEAD
 		while (p != NULL)
 		{
 			if (p->getID() == ID)
 			{
+=======
+		while (p != NULL){
+			if (p->getNome() == nome){
+>>>>>>> main
 				if (a == NULL)
 				{
 					this->rootVertice = p->getProximo();
@@ -124,6 +139,23 @@ Vertice *Grafo::getVertice(int ID)
 	}
 }
 
+Vertice *Grafo::getVerticeByNome(int nome){
+	if (this->rootVertice == NULL){
+		return NULL;
+	}
+	else{
+		Vertice *p = this->rootVertice;
+		while (p != NULL){
+			if (p->getNome() == nome){
+				return p;
+			}
+			p = p->getProximo();
+		}
+		// Caso o nome do vertice nao tenha sido encontrado
+		return NULL;
+	}
+}
+
 // Retorna o valor de uma aresta caso exista
 double Grafo::getArestaValor(int ID1, int ID2)
 {
@@ -159,6 +191,7 @@ Aresta *Grafo::getAresta(int ID1, int ID2)
 }
 
 // Funcao que verifica se existe (true) conexao entre 2 vertices
+<<<<<<< HEAD
 bool Grafo::verificaConexao(int ID1, int ID2)
 {
 	Vertice *v = this->getVertice(ID1);
@@ -167,6 +200,14 @@ bool Grafo::verificaConexao(int ID1, int ID2)
 	{
 		if (a->getVerticeID() == ID2)
 		{
+=======
+bool Grafo::verificaConexao(int nome1, int nome2){
+	Vertice *v1 = this->getVerticeByNome(nome1);
+	Aresta *a = v1->getRootAresta();
+	int ID2 = this->getVerticeByNome(nome2)->getID();
+	while (a != NULL) {
+		if (a->getVerticeID() == ID2){
+>>>>>>> main
 			return true;
 		}
 		a = a->getProximo();
@@ -254,10 +295,10 @@ bool Grafo::addArestaDirecionada(int ID1, int ID2, double valor)
 		return false;
 }
 
-bool Grafo::addAresta(int ID1, int ID2, double valor)
-{
-	if (this->direcionado)
-	{
+bool Grafo::addAresta(int nome1, int nome2, double valor){
+	int ID1 = this->getVerticeByNome(nome1)->getID();
+	int ID2 = this->getVerticeByNome(nome2)->getID();
+	if (this->direcionado){
 		return this->addArestaDirecionada(ID1, ID2, valor);
 	}
 	return this->addArestaNaoDirecionada(ID1, ID2, valor);
@@ -316,15 +357,24 @@ void Grafo::printVertices()
 {
 	Vertice *p = this->rootVertice;
 	Aresta *e;
+<<<<<<< HEAD
 	while (p != NULL)
 	{
+=======
+	while (p != NULL){
+>>>>>>> main
 		std::cout << "[" << p->getNome() << "] : "
 				  << " grau:" << p->grau << std::endl;
 		e = p->getRootAresta();
 
+<<<<<<< HEAD
 		while (e != NULL)
 		{
 			std::cout << e->getVerticeID() << "(" << e->getValor() << ") ";
+=======
+		while (e != NULL){
+			std::cout << this->getVertice(e->getVerticeID())->getNome() << "(" << e->getValor() << ") ";
+>>>>>>> main
 			e = e->getProximo();
 		}
 
@@ -337,6 +387,7 @@ void Grafo::salvaVertices(ofstream &saida)
 {
 	Vertice *p = this->rootVertice;
 	Aresta *e;
+<<<<<<< HEAD
 	while (p != NULL)
 	{
 		saida << "[" << p->getNome() << "] : "
@@ -346,6 +397,15 @@ void Grafo::salvaVertices(ofstream &saida)
 		while (e != NULL)
 		{
 			saida << e->getVerticeID() << "(" << e->getValor() << ") ";
+=======
+	while (p != NULL){
+		saida << "[" << p->getNome() << "] : "
+				  << " grau:" << p->grau << std::endl;
+		e = p->getRootAresta();
+
+		while (e != NULL){
+			saida << this->getVertice(e->getVerticeID())->getNome() << "(" << e->getValor() << ") ";
+>>>>>>> main
 			e = e->getProximo();
 		}
 
@@ -354,11 +414,17 @@ void Grafo::salvaVertices(ofstream &saida)
 	}
 }
 
+<<<<<<< HEAD
 void Grafo::printArestas()
 {
 	for (ArestaKruskalPrim aresta : arestas)
 	{
 		cout << "Aresta(" << aresta.v1->getID() << ", " << aresta.v2->getID() << ") = " << aresta.valor << endl;
+=======
+void Grafo::printArestas(){
+	for (ArestaKruskalPrim aresta : arestas){
+		cout << "Aresta(" << aresta.v1->getNome() << ", " << aresta.v2->getNome() << ") = " << aresta.valor << endl;
+>>>>>>> main
 	}
 }
 
@@ -414,8 +480,12 @@ void Grafo::contaRotulos()
 	free(contFreqRotulos);
 }
 
+<<<<<<< HEAD
 void Grafo::fechoTransitivoDireto(int ID)
 {
+=======
+void Grafo::fechoTransitivoDireto(int nome){
+>>>>>>> main
 
 	if (!this->getDirecionado())
 	{
@@ -424,7 +494,12 @@ void Grafo::fechoTransitivoDireto(int ID)
 	}
 
 	stack<int> pilha;
+<<<<<<< HEAD
 	Vertice *v = this->getVertice(ID);
+=======
+	Vertice* v = this->getVerticeByNome(nome);
+	int ID = v->getID();
+>>>>>>> main
 	vector<int> fechoDir;
 	bool *visitado = new bool[this->getN()];
 	int j = 0;
@@ -470,8 +545,12 @@ void Grafo::fechoTransitivoDireto(int ID)
 	cout << endl;
 }
 
+<<<<<<< HEAD
 void Grafo::fechoTransitivoIndireto(int ID)
 {
+=======
+void Grafo::fechoTransitivoIndireto(int nome){
+>>>>>>> main
 
 	if (!this->getDirecionado())
 	{
@@ -482,6 +561,7 @@ void Grafo::fechoTransitivoIndireto(int ID)
 	int tam = this->getN();
 	stack<int> pilha;
 	bool solucao[tam];
+	int ID = this->getVerticeByNome(nome)->getID();
 
 	for (int i = 0; i < tam; i++)
 	{
@@ -561,11 +641,15 @@ void Grafo::fechoTransitivoIndireto(int ID)
 	cout << endl;
 }
 
+<<<<<<< HEAD
 void Grafo::camProfundidade(int id)
 {
+=======
+void Grafo::camProfundidade(int nome){
+>>>>>>> main
 	stack<int> pilha;
 	bool *visitado = new bool[this->getN()];
-	Vertice *v = getVertice(id);
+	Vertice *v = getVerticeByNome(nome);
 
 	for (int i = 0; i < this->getN(); i++)
 	{
@@ -629,13 +713,18 @@ typedef struct
 	int distancia = 0;
 } VerticeDijkstra;
 
+<<<<<<< HEAD
 void Grafo::dijkstra(int ID1)
 {
+=======
+void Grafo::dijkstra(int nome){
+>>>>>>> main
 	int minIndice;
 	int valorAresta;
 
 	vector<int> q = this->getListaIDVertices();
 	int restante = q.size();
+	int ID1 = this->getVerticeByNome(nome)->getID();
 
 	VerticeDijkstra *vertices = new VerticeDijkstra[q.size()];
 
@@ -696,8 +785,13 @@ void Grafo::dijkstra(int ID1)
 		}
 	}
 
+<<<<<<< HEAD
 	for (int i = q.size() - 1; i > -1; i--)
 	{
+=======
+
+	for(int i = q.size() - 1; i > -1; i--){
+>>>>>>> main
 		cout << "Distancia de " << this->getVertice(ID1)->getNome() << " a " << this->getVertice(vertices[i].id)->getNome() << " = " << vertices[i].distancia << endl;
 	}
 
@@ -988,6 +1082,7 @@ void Grafo::prim()
 	std::cout << endl
 			  << "-- Solucao de AGM pelo algoritmo de Prim --" << endl;
 	std::cout << "Sequencia de insercao das arestas: " << endl;
+<<<<<<< HEAD
 	for (ArestaKruskalPrim aresta : solucao)
 		std::cout << "(" << aresta.v1->getID() << ", " << aresta.v2->getID() << ")"
 				  << " --> ";
@@ -1055,6 +1150,11 @@ void Grafo::auxOT(Vertice *primeiro, std::vector<int> &vect, Vertice **visitados
 				break;
 		}
 	}
+=======
+	for(ArestaKruskalPrim aresta: solucao)
+		std::cout << "(" << aresta.v1->getNome() << ", " << aresta.v2->getNome() << ")" << " --> ";
+	std::cout << endl << "Custo total: " << custo_total << endl;
+>>>>>>> main
 }
 
 bool Grafo::encontraElementoVetor(vector<int> vect, int elem)
@@ -1239,11 +1339,17 @@ void Grafo::gulosoHeuristicaPrim()
 	std::cout << endl
 			  << "-- Solucao do PAGRM pelo algoritmo Guloso - Heuristica Prim --" << endl;
 	std::cout << "Sequencia de insercao das arestas: " << endl;
+<<<<<<< HEAD
 	for (ArestaKruskalPrim aresta : solucao)
 		std::cout << "(" << aresta.v1->getID() << ", " << aresta.v2->getID() << ")"
 				  << " --> ";
 	std::cout << endl
 			  << "Rotulos utilizados: " << guardaRotulosSolucao.size() << endl;
+=======
+	for(ArestaKruskalPrim aresta: solucao)
+		std::cout << "(" << aresta.v1->getNome() << ", " << aresta.v2->getNome() << ")" << " --> ";
+	std::cout << endl << "Rotulos utilizados: " << guardaRotulosSolucao.size() << endl;
+>>>>>>> main
 }
 
 void Grafo::auxOrdenacaoTopologica(Vertice *primeiro, std::vector<int> &vect, Vertice **visitados, int n)
@@ -1298,6 +1404,7 @@ void Grafo::auxOrdenacaoTopologica(Vertice *primeiro, std::vector<int> &vect, Ve
 	}
 }
 
+<<<<<<< HEAD
 // void Grafo::ordenacaoTopologica(Grafo* g){
 
 // 	int nVertices = g->getN();
@@ -1337,3 +1444,45 @@ void Grafo::auxOrdenacaoTopologica(Vertice *primeiro, std::vector<int> &vect, Ve
 //         cout << ot[i] << ", ";
 //     }
 // }
+=======
+void Grafo::ordenacaoTopologica(Grafo* g){
+
+	int nVertices = g->getN();
+	int nArestas = g->getM();
+	
+	//Excluindo tambem grafos nao direcionados
+    if(!g->getDirecionado())
+    {
+        cout << "Grafo deve ser direcionado." << endl;
+        return;
+    }
+
+    Vertice* p = g->getRootVertice();
+    vector<Vertice*> nos;
+    vector<int> ot;
+    queue<Vertice*>fontes;
+
+    Vertice** visitados = new Vertice*[n]();
+
+    for(; p != NULL; p = p->getProximo())
+    {
+        nos.push_back(p);
+        if(p->getGrauEntrada() == 0)
+            fontes.push(p);
+    }
+
+
+    while(!fontes.empty())
+    {
+        Vertice* r = fontes.front();
+        auxOrdenacaoTopologica(r, ot, visitados, n);
+        fontes.pop();
+    }
+
+    cout << "\nOrdenacao topologica: ";
+    for (int i = 0; i < (int)ot.size(); i++)
+    {
+        cout << getVertice(ot[i])->getNome() << ", ";
+    }
+}
+>>>>>>> main
