@@ -59,7 +59,7 @@ int main(int argc, const char* argv[])
     }
 
     //Print de arestas (apenas para testes)
-    g->printArestas();
+    // g->printArestas();
     
     while(menu(g,saida));
     
