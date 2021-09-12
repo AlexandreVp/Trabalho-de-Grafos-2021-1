@@ -1,0 +1,18 @@
+Olá Stênio, como ocorrido com outros grupos, nosso trabalho 1 estava apenas podendo ler arquivos das instâncias de exemplo.
+Com isso, só era possível ler id's indo de 0 até n-1 para o grafo.
+
+Agora, consertamos a leitura de arquivos e gostaríamos que as funções implementadas fossem corrigidas com base nisso.
+
+Obrigado pela atenção.
+
+Grupo 3
+
+
+Para a execução do código é utilizada a mesma linha de comando para o trabalho 1
+E para utilizar das funções e correção do trabalho 1, selecionar a opção "(0) Nao" quando solicitado o desejo de trabalhar
+com a árvore geradora de rotulação mínima.
+
+
+
+Para o trabalho 2, as instâncias utilizadas e testadas estão na pasta "Instâncias Trabalho 2". Selecionar opção "(1) Sim" para trabalhar
+com a árvore geradora de rotulação mínima.

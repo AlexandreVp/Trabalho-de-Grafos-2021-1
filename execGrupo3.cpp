@@ -11,6 +11,9 @@ using namespace std;
 
 // GRUPO 3
 // ALEXANDRE VIEIRA PEREIRA PACELLI
+// GABRIEL RODRIGUES TOLEDO
+// GUSTAVO MORAIS RODRIGUES COSTA
+// NYKOLAS CATALAO OLIVEIRA
 
 int main(int argc, const char* argv[])
 {
