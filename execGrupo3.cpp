@@ -23,11 +23,15 @@ int main(int argc, const char* argv[])
     saida.open(argv[2], ios::out | ios::trunc);
 
     // Obtendo a informacao se o grafo eh direcionado ou nao
-    bool ehDirecionado = argv[3];
+    bool ehDirecionado = true;
+    if(argv[3][0] == '0')
+        ehDirecionado = false;
     g->setDirecionado(ehDirecionado);
 
     // Obtendo a informacao se o grafo eh ponderado ou nao
-    bool ehPonderado = argv[4];
+    bool ehPonderado = true;
+    if(argv[4][0] == '0')
+        ehPonderado = false;
     g->setPonderado(ehPonderado);
 
     // Obtendo a informacao se sera trabalhada a Arvore Geradora de Rotulacao Minima
@@ -54,8 +58,8 @@ int main(int argc, const char* argv[])
         g->contaRotulos();
     }
 
-    // Print de arestas (apenas para testes)
-    // g->printArestas();
+    //Print de arestas (apenas para testes)
+    g->printArestas();
     
     while(menu(g,saida));
     
